@@ -2,6 +2,8 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace FlashCard.Migrations
 {
     /// <inheritdoc />
@@ -88,6 +90,56 @@ namespace FlashCard.Migrations
                         principalTable: "Words",
                         principalColumn: "WordId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Languages",
+                columns: new[] { "LanguageId", "LanguageName" },
+                values: new object[,]
+                {
+                    { 1, "English" },
+                    { 2, "French" },
+                    { 3, "German" },
+                    { 4, "Spanish" },
+                    { 5, "Italian" },
+                    { 6, "Russian" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Levels",
+                columns: new[] { "LevelId", "LevelName" },
+                values: new object[,]
+                {
+                    { 1, "A1" },
+                    { 2, "A2" },
+                    { 3, "B1" },
+                    { 4, "B2" },
+                    { 5, "C1" },
+                    { 6, "C2" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Words",
+                columns: new[] { "WordId", "ImageUrl", "LanguageId", "LevelId", "WordText" },
+                values: new object[,]
+                {
+                    { 1, "", 1, 1, "Hello" },
+                    { 2, "", 2, 1, "Bonjour" },
+                    { 3, "", 3, 1, "Guten Tag" },
+                    { 4, "", 4, 1, "Hola" },
+                    { 5, "", 5, 1, "Ciao" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Translations",
+                columns: new[] { "TranslationId", "SourceWordId", "TargetWordId" },
+                values: new object[,]
+                {
+                    { 1, 1, 2 },
+                    { 2, 2, 1 },
+                    { 3, 3, 4 },
+                    { 4, 4, 3 },
+                    { 5, 5, 5 }
                 });
 
             migrationBuilder.CreateIndex(

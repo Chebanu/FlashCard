@@ -1,0 +1,37 @@
+[
+  {
+    "WordId": 1,
+    "WordText": "Hello",
+    "LanguageId": 1,
+    "LevelId": 1,
+    "ImageUrl": ""
+  },
+  {
+    "WordId": 2,
+    "WordText": "Bonjour",
+    "LanguageId": 2,
+    "LevelId": 1,
+    "ImageUrl": ""
+  },
+  {
+    "WordId": 3,
+    "WordText": "Guten Tag",
+    "LanguageId": 3,
+    "LevelId": 1,
+    "ImageUrl": ""
+  },
+  {
+    "WordId": 4,
+    "WordText": "Hola",
+    "LanguageId": 4,
+    "LevelId": 1,
+    "ImageUrl": ""
+  },
+  {
+    "WordId": 5,
+    "WordText": "Ciao",
+    "LanguageId": 5,
+    "LevelId": 1,
+    "ImageUrl": ""
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "TranslationId": 1,
+    "SourceWordId": 1,
+    "TargetWordId": 2
+  },
+  {
+    "TranslationId": 2,
+    "SourceWordId": 2,
+    "TargetWordId": 1
+  },
+  {
+    "TranslationId": 3,
+    "SourceWordId": 3,
+    "TargetWordId": 4
+  },
+  {
+    "TranslationId": 4,
+    "SourceWordId": 4,
+    "TargetWordId": 3
+  },
+  {
+    "TranslationId": 5,
+    "SourceWordId": 5,
+    "TargetWordId": 5
+  }
+]

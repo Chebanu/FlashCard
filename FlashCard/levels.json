@@ -1,0 +1,26 @@
+[
+  {
+    "LevelId": 1,
+    "LevelName": "A1"
+  },
+  {
+    "LevelId": 2,
+    "LevelName": "A2"
+  },
+  {
+    "LevelId": 3,
+    "LevelName": "B1"
+  },
+  {
+    "LevelId": 4,
+    "LevelName": "B2"
+  },
+  {
+    "LevelId": 5,
+    "LevelName": "C1"
+  },
+  {
+    "LevelId": 6,
+    "LevelName": "C2"
+  }
+]
