@@ -1,11 +1,12 @@
 ﻿using FlashCard.Model;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
-namespace FlashCard.Translations;
+namespace FlashCard.Mediator.Translations;
 
-public class Delete
+public class DeleteTranslations
 {
-	public class Command: IRequest
+	public class Command : IRequest
 	{
 		public int Id { get; set; }
 	}
@@ -19,7 +20,7 @@ public class Delete
 		}
 		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
 		{
-			var translation = await _context.Translations.FindAsync(request.Id);
+			var translation = await _context.Translations.Include(s => s.SourceWord).Include(t=>t.TargetWord).FirstOrDefaultAsync(cancellationToken);
 
 			_context.Remove(translation);
 

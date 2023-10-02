@@ -1,4 +1,4 @@
-﻿using FlashCard.Translations;
+﻿using FlashCard.Mediator.Words;
 using MediatR;
 
 namespace FlashCard.Extentions;
@@ -17,7 +17,7 @@ public static class ApplicationServiceExtensions
 				policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
 			});
 		});
-		services.AddMediatR(typeof(List.Handler));
+		services.AddMediatR(typeof(ListWords.Handler));
 		services.AddAutoMapper(typeof(MappingProfilesTranslation).Assembly);
 		services.AddAutoMapper(typeof(MappingProfilesWord).Assembly);
 

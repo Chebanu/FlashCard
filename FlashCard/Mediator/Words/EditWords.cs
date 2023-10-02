@@ -1,15 +1,14 @@
 ﻿using AutoMapper;
 using FlashCard.Model;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
-namespace FlashCard.Translations;
+namespace FlashCard.Mediator.Words;
 
-public class Edit
+public class EditWords
 {
 	public class Command : IRequest
 	{
-		public Translation Translation { get; set; }
+		public Word Word { get; set; }
 	}
 
 	public class Handler : IRequestHandler<Command>
@@ -25,9 +24,9 @@ public class Edit
 
 		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
 		{
-			var translation = await _context.Translations.FindAsync(request.Translation.TranslationId);
+			var translation = await _context.Words.FindAsync(request.Word.WordId);
 
-			_mapper.Map(request.Translation, translation);
+			_mapper.Map(request.Word, translation);
 
 			await _context.SaveChangesAsync();
 

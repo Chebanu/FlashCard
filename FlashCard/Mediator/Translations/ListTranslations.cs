@@ -2,9 +2,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace FlashCard.Translations;
+namespace FlashCard.Mediator.Translations;
 
-public class List
+public class ListTranslations
 {
     public class Query : IRequest<List<Translation>> { }
 
@@ -20,10 +20,10 @@ public class List
         public async Task<List<Translation>> Handle(Query request, CancellationToken cancellationToken)
         {
             return await _context.Translations.Include(t => t.SourceWord)
-                                                .Include(l=>l.SourceWord.Level)
+                                                .Include(l => l.SourceWord.Level)
                                                 .Include(l => l.SourceWord.Language)
                                                 .Include(t => t.TargetWord)
-                                                .Include(l=> l.TargetWord.Level)
+                                                .Include(l => l.TargetWord.Level)
                                                 .Include(l => l.TargetWord.Language)
                                             .ToListAsync();
         }
