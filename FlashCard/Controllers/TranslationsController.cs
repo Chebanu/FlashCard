@@ -17,6 +17,25 @@ public class TranslationsController : BaseApiController
 		return await Mediator.Send(new DetailsTranslations.Query { Id = id });
 	}
 
+	[HttpGet("{quantity}/{sourceLanguage}/{targetLanguage}")]
+	public async Task<ActionResult<List<Translation>>> GetRandomCards(int quantity, string sourceLanguage, string targetLanguage)
+	{
+		var translations = await Mediator.Send(new GetTranslations.Query { Quantity = quantity, SourceLanguage = sourceLanguage, TargetLanguage = targetLanguage });
+
+		if(translations.Count == 0 && sourceLanguage != targetLanguage)
+		{
+			translations = await Mediator.Send(new GetTranslations.Query { Quantity = quantity, SourceLanguage = targetLanguage, TargetLanguage = sourceLanguage });
+
+			foreach (var translation in translations)
+			{
+				(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
+			}
+
+		}
+
+		return translations;
+	}
+
 	[HttpPost]
 	public async Task<ActionResult> Create(Translation translation)
 	{

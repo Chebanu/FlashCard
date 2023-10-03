@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlashCard.Migrations
 {
     [DbContext(typeof(FlashCardDbContext))]
-    [Migration("20231001082853_initial")]
-    partial class initial
+    [Migration("20231003163807_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,6 @@ namespace FlashCard.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LanguageId"));
 
                     b.Property<string>("LanguageName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LanguageId");
@@ -82,7 +81,6 @@ namespace FlashCard.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LevelId"));
 
                     b.Property<string>("LevelName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LevelId");
@@ -138,9 +136,10 @@ namespace FlashCard.Migrations
 
                     b.HasKey("TranslationId");
 
-                    b.HasIndex("SourceWordId");
-
                     b.HasIndex("TargetWordId");
+
+                    b.HasIndex(new[] { "SourceWordId", "TargetWordId" }, "IX_SourceTarget")
+                        .IsUnique();
 
                     b.ToTable("Translations");
 
@@ -153,21 +152,9 @@ namespace FlashCard.Migrations
                         },
                         new
                         {
-                            TranslationId = 2,
-                            SourceWordId = 2,
-                            TargetWordId = 1
-                        },
-                        new
-                        {
                             TranslationId = 3,
                             SourceWordId = 3,
                             TargetWordId = 4
-                        },
-                        new
-                        {
-                            TranslationId = 4,
-                            SourceWordId = 4,
-                            TargetWordId = 3
                         },
                         new
                         {
@@ -195,7 +182,6 @@ namespace FlashCard.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("WordText")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("WordId");

@@ -21,14 +21,18 @@ public class DetailsTranslations
 
 		public async Task<Translation> Handle(Query request, CancellationToken cancellationToken)
 		{
-			return await _context.Translations.Include(t => t.SourceWord)
-												.Include(l => l.SourceWord.Level)
-												.Include(l => l.SourceWord.Language)
-												.Include(t => t.TargetWord)
-												.Include(l => l.TargetWord.Level)
-												.Include(l => l.TargetWord.Language)
-												.Where(t => t.TranslationId == request.Id)
-											.FirstOrDefaultAsync(cancellationToken);
+			var translation = await _context.Translations
+				.Include(t => t.SourceWord)
+				.Include(t => t.TargetWord)
+				.Include(s=>s.SourceWord.Language)
+				.Include(s => s.TargetWord.Language)
+				.Include(s => s.SourceWord.Level)
+				.Include(s => s.TargetWord.Level)
+				.Where(t => t.TranslationId == request.Id)
+				.FirstOrDefaultAsync(cancellationToken);
+
+			return translation;
 		}
+
 	}
 }

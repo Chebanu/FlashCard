@@ -7,7 +7,7 @@
 namespace FlashCard.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,7 +18,7 @@ namespace FlashCard.Migrations
                 {
                     LanguageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LanguageName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    LanguageName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -31,7 +31,7 @@ namespace FlashCard.Migrations
                 {
                     LevelId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    LevelName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    LevelName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -44,7 +44,7 @@ namespace FlashCard.Migrations
                 {
                     WordId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    WordText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WordText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageId = table.Column<int>(type: "int", nullable: false),
                     LevelId = table.Column<int>(type: "int", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -136,16 +136,15 @@ namespace FlashCard.Migrations
                 values: new object[,]
                 {
                     { 1, 1, 2 },
-                    { 2, 2, 1 },
                     { 3, 3, 4 },
-                    { 4, 4, 3 },
                     { 5, 5, 5 }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Translations_SourceWordId",
+                name: "IX_SourceTarget",
                 table: "Translations",
-                column: "SourceWordId");
+                columns: new[] { "SourceWordId", "TargetWordId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Translations_TargetWordId",

@@ -20,7 +20,9 @@ public class DeleteTranslations
 		}
 		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
 		{
-			var translation = await _context.Translations.Include(s => s.SourceWord).Include(t=>t.TargetWord).FirstOrDefaultAsync(cancellationToken);
+			var translation = await _context.Translations.Include(s => s.SourceWord)
+															.Include(t=>t.TargetWord)
+														.FirstOrDefaultAsync(cancellationToken);
 
 			_context.Remove(translation);
 
