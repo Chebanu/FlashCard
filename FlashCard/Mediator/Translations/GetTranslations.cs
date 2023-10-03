@@ -34,7 +34,7 @@ public class GetTranslations
 					 TranslationId = x.TranslationId,
 					 SourceWord = x.SourceWord,
 					 TargetWord = x.TargetWord,
-				 })				 
+				 })
 				 .Where(x => x.SourceWord.Language.LanguageName == request.SourceLanguage)
 				 .Where(x => x.TargetWord.Language.LanguageName == request.TargetLanguage)
 				 .Take(request.Quantity)

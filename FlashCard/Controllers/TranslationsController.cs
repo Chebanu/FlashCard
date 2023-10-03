@@ -30,7 +30,6 @@ public class TranslationsController : BaseApiController
 			{
 				(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
 			}
-
 		}
 
 		return translations;
