@@ -1,6 +1,8 @@
 using FlashCard.Extentions;
+using FlashCard.Interfacces;
 using FlashCard.Model;
 using FlashCard.Model.Entities;
+using FlashCard.Shared.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +51,7 @@ builder.Services.AddAuthentication(options =>
 	};
 });
 
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 /*
