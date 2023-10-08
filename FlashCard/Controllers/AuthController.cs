@@ -1,4 +1,5 @@
 ﻿using FlashCard.Model.DTO;
+using FlashCard.Model.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -10,11 +11,11 @@ namespace FlashCard.Controllers;
 
 public class AuthController : BaseApiController
 {
-	private readonly UserManager<IdentityUser> _userManager;
+	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly RoleManager<IdentityRole> _roleManager;
 	private readonly IConfiguration _config;
 
-	public AuthController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration config)
+	public AuthController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration config)
 	{
 		_userManager = userManager;
 		_roleManager = roleManager;
@@ -28,7 +29,7 @@ public class AuthController : BaseApiController
 		bool isAdminRoleExist = await _roleManager.RoleExistsAsync(StaticUserRoles.ADMIN);
 		bool isUseRoleExist = await _roleManager.RoleExistsAsync(StaticUserRoles.USER);
 
-		if(isAdminRoleExist && isUseRoleExist)
+		if (isAdminRoleExist && isUseRoleExist)
 		{
 			return Ok("Roles seeding is already done");
 		}
@@ -45,13 +46,15 @@ public class AuthController : BaseApiController
 	{
 		var isExists = await _userManager.FindByNameAsync(registerDto.UserName);
 
-		if(isExists != null)
+		if (isExists != null)
 		{
 			return BadRequest("Username is already exists");
 		}
 
-		IdentityUser newUser = new IdentityUser()
+		var newUser = new ApplicationUser()
 		{
+			FirstName = registerDto.FirstName,
+			LastName = registerDto.LastName,
 			Email = registerDto.Email,
 			UserName = registerDto.UserName,
 			SecurityStamp = Guid.NewGuid().ToString()
@@ -59,7 +62,7 @@ public class AuthController : BaseApiController
 
 		var createUserResult = await _userManager.CreateAsync(newUser, registerDto.Password);
 
-		if(!createUserResult.Succeeded)
+		if (!createUserResult.Succeeded)
 		{
 			var errorString = "UserCreation Failed";
 			foreach (var error in createUserResult.Errors)
@@ -80,14 +83,14 @@ public class AuthController : BaseApiController
 	{
 		var user = await _userManager.FindByNameAsync(loginDto.UserName);
 
-		if(user is null)
+		if (user is null)
 		{
 			return Unauthorized("Invalid credentials");
 		}
 
 		var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginDto.Password);
 
-		if(!isPasswordCorrect)
+		if (!isPasswordCorrect)
 		{
 			return Unauthorized("Invalid password");
 		}
@@ -98,9 +101,11 @@ public class AuthController : BaseApiController
 		{
 			new Claim(ClaimTypes.Name, user.UserName),
 			new Claim(ClaimTypes.NameIdentifier, user.Id),
-			new Claim("JWTID", Guid.NewGuid().ToString())
+			new Claim("JWTID", Guid.NewGuid().ToString()),
+			new Claim("FirstName", user.FirstName),
+			new Claim("LastName", user.LastName)
 		};
-		foreach(var userRole in userRoles) 
+		foreach (var userRole in userRoles)
 		{
 			authClaims.Add(new Claim(ClaimTypes.Role, userRole));
 		}
@@ -124,5 +129,24 @@ public class AuthController : BaseApiController
 		string token = new JwtSecurityTokenHandler().WriteToken(tokenObj);
 
 		return token;
+	}
+
+	//make user => admin
+	[HttpPost]
+	[Route("make-admin")]
+	public async Task<IActionResult> MakeAdmin([FromBody] UpdatePermissionDto updatePermissionDto)
+	{
+		var user = await _userManager.FindByNameAsync(updatePermissionDto.UserName);
+
+		if (user is null)
+		{
+			return BadRequest("Invalid UserName");
+
+		}
+
+		await _userManager.AddToRoleAsync(user, StaticUserRoles.ADMIN);
+
+		return Ok("User is now an admin");
+
 	}
 }

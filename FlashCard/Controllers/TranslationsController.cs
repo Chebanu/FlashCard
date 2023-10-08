@@ -1,17 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FlashCard.Mediator.Translations;
+using Microsoft.AspNetCore.Authorization;
+using FlashCard.Model.DTO;
 
 namespace FlashCard.Controllers;
 
 public class TranslationsController : BaseApiController
 {
 	[HttpGet]
+	[Authorize(Roles = "Admin")]
 	public async Task<ActionResult<List<Translation>>> GetTranslations()
 	{
 		return await Mediator.Send(new ListTranslations.Query());
 	}
 
 	[HttpGet("{id}")]
+	[Authorize(Roles = "User")]
 	public async Task<ActionResult<Translation>> GetTranslation(int id)
 	{
 		return await Mediator.Send(new DetailsTranslations.Query { Id = id });

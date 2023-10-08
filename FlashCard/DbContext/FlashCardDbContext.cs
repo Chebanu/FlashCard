@@ -1,11 +1,12 @@
 ﻿using FlashCard.Model.Domain;
+using FlashCard.Model.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace FlashCard.Model;
 
-public class FlashCardDbContext : IdentityDbContext
+public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 {
 	public FlashCardDbContext(DbContextOptions<FlashCardDbContext> options) : base(options)
 	{
