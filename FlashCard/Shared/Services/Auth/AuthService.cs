@@ -105,7 +105,7 @@ public class AuthService : IAuthService
 
 		return new AuthServiceRequestDto
 		{
-			IsSuceed = false,
+			IsSuceed = true,
 			Message = "User is now an admin"
 		};
 

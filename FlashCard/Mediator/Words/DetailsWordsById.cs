@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlashCard.Mediator.Words;
 
-public class DetailsWords
+public class DetailsWordsById
 {
 	public class Query : IRequest<Word>
 	{

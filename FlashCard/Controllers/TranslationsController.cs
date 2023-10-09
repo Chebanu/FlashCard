@@ -2,20 +2,23 @@
 using FlashCard.Mediator.Translations;
 using Microsoft.AspNetCore.Authorization;
 using FlashCard.Model.DTO;
+using FlashCard.Mediator.Words;
 
 namespace FlashCard.Controllers;
 
 public class TranslationsController : BaseApiController
 {
 	[HttpGet]
-	[Authorize(Roles = "Admin")]
-	public async Task<ActionResult<List<Translation>>> GetTranslations()
+	public async Task<ActionResult<List<Translation>>> GetTranslations(string sourceLanguage, string targetLanguage)
 	{
-		return await Mediator.Send(new ListTranslations.Query());
+		return await Mediator.Send(new ListTranslations.Query
+		{
+			SourceLanguage = sourceLanguage,
+			TargetLanguage = targetLanguage
+		});
 	}
 
 	[HttpGet("{id}")]
-	[Authorize(Roles = "User")]
 	public async Task<ActionResult<Translation>> GetTranslation(int id)
 	{
 		return await Mediator.Send(new DetailsTranslations.Query { Id = id });
@@ -24,34 +27,35 @@ public class TranslationsController : BaseApiController
 	[HttpGet("quantity/{quantity}/{sourceLanguage}/{targetLanguage}")]
 	public async Task<ActionResult<List<Translation>>> GetRandomQuantityOfCards(int quantity, string sourceLanguage, string targetLanguage)
 	{
+		if (quantity <= 0 ||sourceLanguage == targetLanguage)
+			return BadRequest("Something went wrong");
+
 		var translations = await Mediator.Send(new GetTranslationsByQuantity.Query
 		{
-			Quantity = quantity,
 			SourceLanguage = sourceLanguage,
 			TargetLanguage = targetLanguage
 		});
 
-		if(translations.Count == 0 && sourceLanguage != targetLanguage)
+		var reverseTranslations = await Mediator.Send(new GetTranslationsByQuantity.Query
 		{
-			translations = await Mediator.Send(new GetTranslationsByQuantity.Query
-			{	
-				Quantity = quantity,
-				SourceLanguage = targetLanguage,
-				TargetLanguage = sourceLanguage
-			});
+			SourceLanguage = targetLanguage,
+			TargetLanguage = sourceLanguage
+		});
 
-			foreach (var translation in translations)
-			{
-				(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
-			}
-		}
+		foreach (var translation in translations)
+			(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
 
-		return translations;
+		var concatTranslation = translations.Concat(reverseTranslations).Distinct().Take(quantity).ToList();
+
+		return concatTranslation;
 	}
 
 	[HttpGet("level/{level}/{sourceLanguage}/{targetLanguage}")]
 	public async Task<ActionResult<List<Translation>>> GetCardsByLevel(string level, string sourceLanguage, string targetLanguage)
 	{
+		if (sourceLanguage == targetLanguage)
+			return BadRequest("Source language and target language must be different");
+
 		var translations = await Mediator.Send(new GetTranslationsByLevel.Query
 		{
 			Level = level,
@@ -59,35 +63,71 @@ public class TranslationsController : BaseApiController
 			TargetLanguage = targetLanguage
 		});
 
-		if (translations.Count == 0 && sourceLanguage != targetLanguage)
+		var reverseTranslations = await Mediator.Send(new GetTranslationsByLevel.Query
 		{
-			translations = await Mediator.Send(new GetTranslationsByLevel.Query
-			{
-				Level = level,
-				SourceLanguage = targetLanguage,
-				TargetLanguage = sourceLanguage
-			});
+			Level = level,
+			SourceLanguage = targetLanguage,
+			TargetLanguage = sourceLanguage
+		});
 
-			foreach (var translation in translations)
-			{
-				(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
-			}
-		}
+		foreach (var translation in translations)
+			(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
 
-		return translations;
+		var concatTranslation = translations.Concat(reverseTranslations).Distinct().ToList();
+
+		return concatTranslation;
 	}
 
 	[HttpPost]
 	public async Task<ActionResult> Create(Translation translation)
 	{
+		if (translation.SourceWord == translation.TargetWord)
+			return BadRequest("You can not add translation for the same language as source one");
+
+		var result = await CheckIfTranslationExists(translation);
+
+		if (result != null)
+			return result;
+
 		return Ok(await Mediator.Send(new CreateTranslations.Command { Translation = translation }));
 	}
 
 	[HttpPut("{id}")]
 	public async Task<ActionResult> Edit(int id, Translation translation)
 	{
+		if (translation.SourceWord == translation.TargetWord)
+			return BadRequest("You can not edit translation for the same language as source one");
+
+		var result = await CheckIfTranslationExists(translation);
+
+		if (result != null)
+			return result;
+
 		translation.TranslationId = id;
 		return Ok(await Mediator.Send(new EditTranslations.Command { Translation = translation }));
+	}
+
+	private async Task<ActionResult> CheckIfTranslationExists(Translation translation)
+	{
+		var isTranslationExist = await Mediator.Send(new IsTranslationExist.Query
+		{
+			SourceId = translation.SourceWordId,
+			TargetId = translation.TargetWordId
+		});
+
+		if(!isTranslationExist)
+		{
+			isTranslationExist = await Mediator.Send(new IsTranslationExist.Query
+			{
+				SourceId = translation.TargetWordId,
+				TargetId = translation.SourceWordId
+			});
+		}
+
+		if (isTranslationExist)
+			return BadRequest("The transaltion is already exist in database");
+
+		return null;
 	}
 
 	[HttpDelete("{id}")]

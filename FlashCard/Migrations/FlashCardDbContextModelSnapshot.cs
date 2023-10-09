@@ -340,7 +340,7 @@ namespace FlashCard.Migrations
 
                     b.HasIndex("TargetWordId");
 
-                    b.HasIndex(new[] { "SourceWordId", "TargetWordId" }, "IX_SourceTarget")
+                    b.HasIndex("SourceWordId", "TargetWordId")
                         .IsUnique();
 
                     b.ToTable("Translations");
@@ -357,6 +357,18 @@ namespace FlashCard.Migrations
                             TranslationId = 3,
                             SourceWordId = 3,
                             TargetWordId = 4
+                        },
+                        new
+                        {
+                            TranslationId = 4,
+                            SourceWordId = 1,
+                            TargetWordId = 6
+                        },
+                        new
+                        {
+                            TranslationId = 5,
+                            SourceWordId = 6,
+                            TargetWordId = 1
                         });
                 });
 
@@ -378,13 +390,15 @@ namespace FlashCard.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("WordText")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("WordId");
 
-                    b.HasIndex("LanguageId");
-
                     b.HasIndex("LevelId");
+
+                    b.HasIndex("LanguageId", "WordText")
+                        .IsUnique()
+                        .HasFilter("[WordText] IS NOT NULL");
 
                     b.ToTable("Words");
 
@@ -428,6 +442,14 @@ namespace FlashCard.Migrations
                             LanguageId = 5,
                             LevelId = 1,
                             WordText = "Ciao"
+                        },
+                        new
+                        {
+                            WordId = 6,
+                            ImageUrl = "",
+                            LanguageId = 6,
+                            LevelId = 1,
+                            WordText = "Привет"
                         });
                 });
 

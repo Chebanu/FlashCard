@@ -16,7 +16,10 @@ builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddDbContext<FlashCardDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+	options.EnableSensitiveDataLogging();
+});
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<FlashCardDbContext>().AddDefaultTokenProviders();

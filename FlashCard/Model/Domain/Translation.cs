@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-[Index(nameof(SourceWordId), nameof(TargetWordId), Name = "IX_SourceTarget", IsUnique = true)]
 public class Translation
 {
 	public int TranslationId { get; set; }

@@ -11,7 +11,7 @@ public enum TypeOfQueryTranslation
 
 public class GetTranslation
 {
-	private static async Task<List<Translation>> GetFlashCards(FlashCardDbContext context,
+	public static async Task<List<Translation>> GetFlashCards(FlashCardDbContext context,
 													string sourceLang,
 													string targetLang,
 													Func<IQueryable<Translation>, IQueryable<Translation>> filter = null)
@@ -55,11 +55,11 @@ public class GetTranslation
 				if (!string.IsNullOrWhiteSpace(level))
 					translations = await GetFlashCards(context, sourceLang, targetLang, query => query
 													.Where(t => t.SourceWord.Level.LevelName == level));
-				break;
+				break;/*
 			case TypeOfQueryTranslation.Quantity:
 				if (quantity > 0)
 					translations = await GetFlashCards(context, sourceLang, targetLang, query => query.Take(quantity));
-				break;
+				break;*/
 			default:
 				throw new ArgumentException("Unsupported query type.", nameof(typeOfQueryTranslation));
 		}

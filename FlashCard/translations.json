@@ -1,13 +1,22 @@
 [
-  {
-    "TranslationId": 1,
-    "SourceWordId": 1,
-    "TargetWordId": 2
-  },
-
-  {
-    "TranslationId": 3,
-    "SourceWordId": 3,
-    "TargetWordId": 4
-  }
+	{
+		"TranslationId": 1,
+		"SourceWordId": 1,
+		"TargetWordId": 2
+	},
+	{
+		"TranslationId": 3,
+		"SourceWordId": 3,
+		"TargetWordId": 4
+	},
+	{
+		"TranslationId": 4,
+		"SourceWordId": 1,
+		"TargetWordId": 6
+	},
+	{
+		"TranslationId": 5,
+		"SourceWordId": 6,
+		"TargetWordId": 1
+	}
 ]

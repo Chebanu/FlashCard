@@ -9,7 +9,6 @@ public class GetTranslationsByQuantity
 {
 	public class Query : IRequest<List<Translation>>
 	{
-        public int Quantity { get; set; }
 		public string SourceLanguage { get; set; }
 		public string TargetLanguage { get; set; }
 	}
@@ -25,10 +24,7 @@ public class GetTranslationsByQuantity
 
 		public async Task<List<Translation>> Handle(Query request, CancellationToken cancellationToken)
 		{
-			var randomCards = await GetTranslation.GetFalshCardsByParameters(_context,
-																		TypeOfQueryTranslation.Quantity,
-																		request.SourceLanguage, request.TargetLanguage,
-																		quantity: request.Quantity);
+			var randomCards = await GetTranslation.GetFlashCards(_context, request.SourceLanguage, request.TargetLanguage);
 
 			return randomCards;
 		}

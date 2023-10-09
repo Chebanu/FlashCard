@@ -34,6 +34,10 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 			.WithMany()
 			.HasForeignKey(w => w.LevelId);
 
+		modelBuilder.Entity<Word>()
+			.HasIndex(w => new { w.LanguageId, w.WordText })
+			.IsUnique();
+
 		modelBuilder.Entity<Translation>()
 			.HasOne(t => t.SourceWord)
 			.WithMany()
@@ -45,6 +49,10 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 			.HasOne(t => t.TargetWord)
 			.WithMany()
 			.HasForeignKey(t => t.TargetWordId);
+
+		modelBuilder.Entity<Translation>()
+			.HasIndex(w => new { w.SourceWordId, w.TargetWordId })
+			.IsUnique();
 
 
 		string languageJSON = File.ReadAllText("languages.json");
