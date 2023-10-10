@@ -8,8 +8,8 @@ public class IsTranslationExist
 {
 	public class Query : IRequest<bool>
 	{
-		public int SourceId { get; set; }
-		public int TargetId { get; set; }
+		public Guid SourceId { get; set; }
+		public Guid TargetId { get; set; }
 	}
 	public class Handler : IRequestHandler<Query, bool>
 	{

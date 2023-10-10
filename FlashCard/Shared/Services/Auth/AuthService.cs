@@ -1,5 +1,5 @@
 ﻿using FlashCard.Interfacces;
-using FlashCard.Model.DTO;
+using FlashCard.Model.DTO.AuthDto;
 using FlashCard.Model.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

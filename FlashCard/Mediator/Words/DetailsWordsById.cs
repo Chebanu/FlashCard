@@ -8,7 +8,7 @@ public class DetailsWordsById
 {
 	public class Query : IRequest<Word>
 	{
-		public int Id { get; set; }
+		public Guid Id { get; set; }
 	}
 	public class Handler : IRequestHandler<Query, Word>
 	{
@@ -21,8 +21,7 @@ public class DetailsWordsById
 
 		public async Task<Word> Handle(Query request, CancellationToken cancellationToken)
 		{
-			return await _context.Words.Include(w => w.Language)
-										.Include(w => w.Level)
+			return await _context.Words.Where(x=>x.WordId == request.Id)
 									.FirstOrDefaultAsync(cancellationToken);
 		}
 	}

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FlashCard.Mediator.Words;
+using FlashCard.Shared.Services.Translations;
 
 namespace FlashCard.Controllers;
 
@@ -8,12 +9,36 @@ public class WordsController : BaseApiController
 	[HttpGet]
 	public async Task<ActionResult<List<Word>>> GetWords()
 	{
-		return await Mediator.Send(new ListWords.Query());
+		return await Mediator.Send(new ListWords.Query
+		{
+			TypeOfQueryWord = TypeOfQueryWord.All
+		});
+	}
+
+	[HttpGet("byLanguage/{targetLanguage}")]
+	public async Task<ActionResult<List<Word>>> GetWordsByLanguage(string targetLanguage)
+	{
+		return await Mediator.Send(new ListWords.Query
+		{
+			TypeOfQueryWord = TypeOfQueryWord.Language,
+			TargetLanguage = targetLanguage
+		});
+	}
+
+	[HttpGet("byQuantity/{quantity}/{targetLanguage}")]
+	public async Task<ActionResult<List<Word>>> GetWordsByQuantity(string targetLanguage, int quantity)
+	{
+		return await Mediator.Send(new ListWords.Query
+		{
+			TypeOfQueryWord = TypeOfQueryWord.Quantity,
+			TargetLanguage = targetLanguage,
+			Quantity = quantity
+		});
 	}
 
 
 	[HttpGet("{id}")]
-	public async Task<ActionResult<Word>> GetWord(int id)
+	public async Task<ActionResult<Word>> GetWord(Guid id)
 	{
 		return await Mediator.Send(new DetailsWordsById.Query { Id = id });
 	}
@@ -30,7 +55,7 @@ public class WordsController : BaseApiController
 	}
 
 	[HttpPut("{id}")]
-	public async Task<ActionResult> Edit(int id, Word word)
+	public async Task<ActionResult> Edit(Guid id, Word word)
 	{
 		var result = await CheckIfWordExists(word);
 
@@ -56,9 +81,8 @@ public class WordsController : BaseApiController
 	}
 
 	[HttpDelete("{id}")]
-	public async Task<ActionResult> Delete(int id)
+	public async Task<ActionResult> Delete(Guid id)
 	{
 		return Ok(await Mediator.Send(new DeleteWords.Command { Id = id }));
 	}
-
 }

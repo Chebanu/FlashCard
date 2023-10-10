@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FlashCard.Model.DTO;
+namespace FlashCard.Model.DTO.AuthDto;
 
 public class UpdatePermissionDto
 {

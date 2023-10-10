@@ -29,8 +29,10 @@ public class ListTranslations
 												.Include(t => t.TargetWord)
 												.Include(l => l.TargetWord.Level)
 												.Include(l => l.TargetWord.Language)
-												.Where(t => t.SourceWord.Language.LanguageName == request.SourceLanguage &&
-														t.TargetWord.Language.LanguageName == request.TargetLanguage)
+												.Where(t => t.SourceWord.Language.LanguageName ==
+														request.SourceLanguage &&
+														t.TargetWord.Language.LanguageName ==
+														request.TargetLanguage)
 											.ToListAsync();
 
 			/*var translations = await context.Translations

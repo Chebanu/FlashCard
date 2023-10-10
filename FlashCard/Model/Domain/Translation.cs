@@ -2,9 +2,9 @@
 
 public class Translation
 {
-	public int TranslationId { get; set; }
-	public int SourceWordId { get; set; }
-	public int TargetWordId { get; set; }
+	public Guid TranslationId { get; set; }
+	public Guid SourceWordId { get; set; }
+	public Guid TargetWordId { get; set; }
 
 	[ForeignKey("SourceWordId")]
 	public Word SourceWord { get; set; }

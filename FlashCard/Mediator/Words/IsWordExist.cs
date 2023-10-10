@@ -9,7 +9,7 @@ public class IsWordExist
 	public class Query : IRequest<bool>
 	{
 		public string WordText { get; set; }
-		public int LanguageId { get; set; }
+		public Guid LanguageId { get; set; }
 	}
 	public class Handler : IRequestHandler<Query, bool>
 	{

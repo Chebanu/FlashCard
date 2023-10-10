@@ -8,7 +8,7 @@ public class DeleteTranslations
 {
 	public class Command : IRequest
 	{
-		public int Id { get; set; }
+		public Guid Id { get; set; }
 	}
 
 	public class Handler : IRequestHandler<Command>
@@ -20,8 +20,7 @@ public class DeleteTranslations
 		}
 		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
 		{
-			var translation = await _context.Translations.Include(s => s.SourceWord)
-															.Include(t=>t.TargetWord)
+			var translation = await _context.Translations.Where(x => x.TranslationId == request.Id)
 														.FirstOrDefaultAsync(cancellationToken);
 
 			_context.Remove(translation);

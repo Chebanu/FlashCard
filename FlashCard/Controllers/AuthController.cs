@@ -1,5 +1,5 @@
 ﻿using FlashCard.Interfacces;
-using FlashCard.Model.DTO;
+using FlashCard.Model.DTO.AuthDto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlashCard.Controllers;

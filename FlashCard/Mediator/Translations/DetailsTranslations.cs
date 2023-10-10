@@ -8,7 +8,7 @@ public class DetailsTranslations
 {
 	public class Query : IRequest<Translation>
 	{
-		public int Id { get; set; }
+		public Guid Id { get; set; }
 	}
 	public class Handler : IRequestHandler<Query, Translation>
 	{

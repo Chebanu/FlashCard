@@ -3,6 +3,7 @@ using FlashCard.Mediator.Translations;
 using Microsoft.AspNetCore.Authorization;
 using FlashCard.Model.DTO;
 using FlashCard.Mediator.Words;
+using FlashCard.Shared.Services.Translations;
 
 namespace FlashCard.Controllers;
 
@@ -19,7 +20,7 @@ public class TranslationsController : BaseApiController
 	}
 
 	[HttpGet("{id}")]
-	public async Task<ActionResult<Translation>> GetTranslation(int id)
+	public async Task<ActionResult<Translation>> GetTranslation(Guid id)
 	{
 		return await Mediator.Send(new DetailsTranslations.Query { Id = id });
 	}
@@ -30,14 +31,18 @@ public class TranslationsController : BaseApiController
 		if (quantity <= 0 ||sourceLanguage == targetLanguage)
 			return BadRequest("Something went wrong");
 
-		var translations = await Mediator.Send(new GetTranslationsByQuantity.Query
+		var translations = await Mediator.Send(new GetTranslationsBy.Query
 		{
+			TypeOfQueryTranslation = TypeOfQueryTranslation.Quantity,
+			Quantity = quantity,
 			SourceLanguage = sourceLanguage,
 			TargetLanguage = targetLanguage
 		});
 
-		var reverseTranslations = await Mediator.Send(new GetTranslationsByQuantity.Query
+		var reverseTranslations = await Mediator.Send(new GetTranslationsBy.Query
 		{
+			TypeOfQueryTranslation = TypeOfQueryTranslation.Quantity,
+			Quantity = quantity,
 			SourceLanguage = targetLanguage,
 			TargetLanguage = sourceLanguage
 		});
@@ -56,15 +61,17 @@ public class TranslationsController : BaseApiController
 		if (sourceLanguage == targetLanguage)
 			return BadRequest("Source language and target language must be different");
 
-		var translations = await Mediator.Send(new GetTranslationsByLevel.Query
+		var translations = await Mediator.Send(new GetTranslationsBy.Query
 		{
+			TypeOfQueryTranslation = TypeOfQueryTranslation.Level,
 			Level = level,
 			SourceLanguage = sourceLanguage,
 			TargetLanguage = targetLanguage
 		});
 
-		var reverseTranslations = await Mediator.Send(new GetTranslationsByLevel.Query
+		var reverseTranslations = await Mediator.Send(new GetTranslationsBy.Query
 		{
+			TypeOfQueryTranslation = TypeOfQueryTranslation.Level,
 			Level = level,
 			SourceLanguage = targetLanguage,
 			TargetLanguage = sourceLanguage
@@ -93,7 +100,7 @@ public class TranslationsController : BaseApiController
 	}
 
 	[HttpPut("{id}")]
-	public async Task<ActionResult> Edit(int id, Translation translation)
+	public async Task<ActionResult> Edit(Guid id, Translation translation)
 	{
 		if (translation.SourceWord == translation.TargetWord)
 			return BadRequest("You can not edit translation for the same language as source one");
@@ -131,7 +138,7 @@ public class TranslationsController : BaseApiController
 	}
 
 	[HttpDelete("{id}")]
-	public async Task<ActionResult> Delete(int id)
+	public async Task<ActionResult> Delete(Guid id)
 	{
 		return Ok(await Mediator.Send(new DeleteTranslations.Command { Id = id }));
 	}
