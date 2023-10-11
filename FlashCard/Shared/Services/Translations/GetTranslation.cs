@@ -1,4 +1,5 @@
 ﻿using FlashCard.Model;
+using FlashCard.Model.DTO.TranslationDto;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlashCard.Shared.Services.Translations;
@@ -13,6 +14,8 @@ public enum TypeOfQueryTranslation
 public class GetTranslation
 {
 	private static async Task<List<Translation>> GetFlashCards(FlashCardDbContext context,
+													string sourceLang,
+													string targetLang,
 													Func<IQueryable<Translation>, IQueryable<Translation>> filter = null)
 	{
 		var query = context.Translations
@@ -25,7 +28,9 @@ public class GetTranslation
 							TranslationId = x.TranslationId,
 							SourceWord = x.SourceWord,
 							TargetWord = x.TargetWord,
-						});
+						})
+							.Where(s => s.SourceWord.Language.LanguageName == sourceLang)
+							.Where(r => r.TargetWord.Language.LanguageName == targetLang);
 
 		if (filter != null)
 		{
@@ -33,6 +38,7 @@ public class GetTranslation
 		}
 
 		var randomCards = await query.ToListAsync();
+
 		return randomCards;
 	}
 
@@ -44,22 +50,21 @@ public class GetTranslation
 															string level = null,
 															int quantity = 0)
 	{
-		List<Translation> translations = new List<Translation>();
+		var translations = new List<Translation>();
 
 		switch (typeOfQueryTranslation)
 		{
 			case TypeOfQueryTranslation.All:
-				translations = await GetFlashCards(context);
+				translations = await GetFlashCards(context, sourceLang, targetLang);
 				break;
 			case TypeOfQueryTranslation.Level:
 				if (!string.IsNullOrWhiteSpace(level) &&
 					!string.IsNullOrWhiteSpace(targetLang) &&
 					!string.IsNullOrWhiteSpace(sourceLang))
 				{
-					translations = await GetFlashCards(context,
-									query => query.Where(t => t.SourceWord.Level.LevelName == level)
-										.Where(s => s.SourceWord.Language.LanguageName == sourceLang)
-										.Where(r => r.TargetWord.Language.LanguageName == targetLang));
+					translations = await GetFlashCards(context, sourceLang, targetLang,
+															query => query
+																.Where(t => t.SourceWord.Level.LevelName == level));
 				}
 				break;
 			case TypeOfQueryTranslation.Quantity:
@@ -67,11 +72,10 @@ public class GetTranslation
 					!string.IsNullOrWhiteSpace(targetLang) &&
 					!string.IsNullOrWhiteSpace(sourceLang))
 				{
-					translations = await GetFlashCards(context,
-									query => query.Where(s => s.SourceWord.Language.LanguageName == sourceLang)
-										.Where(r => r.TargetWord.Language.LanguageName == targetLang)
-										.OrderBy(x => Guid.NewGuid())
-										.Take(quantity));
+					translations = await GetFlashCards(context,sourceLang, targetLang,
+														query => query
+															.OrderBy(x => Guid.NewGuid())
+															.Take(quantity));
 				}
 				break;
 			default:

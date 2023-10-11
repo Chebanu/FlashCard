@@ -18,8 +18,7 @@ public static class ApplicationServiceExtensions
 			});
 		});
 		services.AddMediatR(typeof(ListWords.Handler));
-		services.AddAutoMapper(typeof(MappingProfilesTranslation).Assembly);
-		services.AddAutoMapper(typeof(MappingProfilesWord).Assembly);
+		services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 		return services;
 	}

@@ -1,34 +1,59 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FlashCard.Mediator.Translations;
-using Microsoft.AspNetCore.Authorization;
-using FlashCard.Model.DTO;
-using FlashCard.Mediator.Words;
 using FlashCard.Shared.Services.Translations;
+using FlashCard.Model.DTO.TranslationDto;
 
 namespace FlashCard.Controllers;
 
 public class TranslationsController : BaseApiController
 {
 	[HttpGet]
-	public async Task<ActionResult<List<Translation>>> GetTranslations(string sourceLanguage, string targetLanguage)
+	public async Task<ActionResult<List<TranslationResponse>>> GetTranslations(string sourceLanguage, string targetLanguage)
 	{
-		return await Mediator.Send(new ListTranslations.Query
+		if (sourceLanguage == targetLanguage)
+			return BadRequest("Source language and target language must be different");
+
+		var translations = await Mediator.Send(new GetTranslationsBy.Query
 		{
+			TypeOfQueryTranslation = TypeOfQueryTranslation.All,
 			SourceLanguage = sourceLanguage,
 			TargetLanguage = targetLanguage
 		});
+
+		var reverseTranslations = await Mediator.Send(new GetTranslationsBy.Query
+		{
+			TypeOfQueryTranslation = TypeOfQueryTranslation.All,
+			SourceLanguage = targetLanguage,
+			TargetLanguage = sourceLanguage
+		});
+
+		foreach (var translation in translations)
+		{
+			(translation.SourceWord, translation.TargetWord) =
+				(translation.TargetWord, translation.SourceWord);
+			(translation.SourceLanguageName, translation.TargetLanguageName) =
+				(translation.TargetLanguageName, translation.SourceLanguageName);
+		}
+
+		//перевернутый ответ, но правильный по структуре(немного доделать)
+
+		var concatTranslation = translations.Concat(reverseTranslations).Distinct().ToList();
+
+		return Ok(concatTranslation);
 	}
 
 	[HttpGet("{id}")]
-	public async Task<ActionResult<Translation>> GetTranslation(Guid id)
+	public async Task<ActionResult<TranslationResponse>> GetTranslation(Guid id)
 	{
+		// работает, необходимо добавить проверку на существования перевода
 		return await Mediator.Send(new DetailsTranslations.Query { Id = id });
 	}
 
 	[HttpGet("quantity/{quantity}/{sourceLanguage}/{targetLanguage}")]
-	public async Task<ActionResult<List<Translation>>> GetRandomQuantityOfCards(int quantity, string sourceLanguage, string targetLanguage)
+	public async Task<ActionResult<List<TranslationResponse>>> GetRandomQuantityOfCards(int quantity, string sourceLanguage, string targetLanguage)
 	{
-		if (quantity <= 0 ||sourceLanguage == targetLanguage)
+		//тоже самое что и с первым методом контроллера
+		if (quantity <= 0 || sourceLanguage == targetLanguage)
 			return BadRequest("Something went wrong");
 
 		var translations = await Mediator.Send(new GetTranslationsBy.Query
@@ -56,8 +81,9 @@ public class TranslationsController : BaseApiController
 	}
 
 	[HttpGet("level/{level}/{sourceLanguage}/{targetLanguage}")]
-	public async Task<ActionResult<List<Translation>>> GetCardsByLevel(string level, string sourceLanguage, string targetLanguage)
+	public async Task<ActionResult<List<TranslationResponse>>> GetCardsByLevel(string level, string sourceLanguage, string targetLanguage)
 	{
+		//сейм щит
 		if (sourceLanguage == targetLanguage)
 			return BadRequest("Source language and target language must be different");
 
@@ -86,60 +112,57 @@ public class TranslationsController : BaseApiController
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> Create(Translation translation)
+	public async Task<ActionResult> Create(TranslationRequest translationRequest)
 	{
-		if (translation.SourceWord == translation.TargetWord)
+		//работает отлично
+		if (translationRequest.SourceLanguageId == translationRequest.TargetLanguageId)
 			return BadRequest("You can not add translation for the same language as source one");
 
-		var result = await CheckIfTranslationExists(translation);
-
-		if (result != null)
-			return result;
-
-		return Ok(await Mediator.Send(new CreateTranslations.Command { Translation = translation }));
-	}
-
-	[HttpPut("{id}")]
-	public async Task<ActionResult> Edit(Guid id, Translation translation)
-	{
-		if (translation.SourceWord == translation.TargetWord)
-			return BadRequest("You can not edit translation for the same language as source one");
-
-		var result = await CheckIfTranslationExists(translation);
-
-		if (result != null)
-			return result;
-
-		translation.TranslationId = id;
-		return Ok(await Mediator.Send(new EditTranslations.Command { Translation = translation }));
-	}
-
-	private async Task<ActionResult> CheckIfTranslationExists(Translation translation)
-	{
-		var isTranslationExist = await Mediator.Send(new IsTranslationExist.Query
+		try
 		{
-			SourceId = translation.SourceWordId,
-			TargetId = translation.TargetWordId
-		});
-
-		if(!isTranslationExist)
-		{
-			isTranslationExist = await Mediator.Send(new IsTranslationExist.Query
+			await Mediator.Send(new CreateTranslations.Command
 			{
-				SourceId = translation.TargetWordId,
-				TargetId = translation.SourceWordId
+				TranslationRequest = translationRequest,
+				Mediator = Mediator
 			});
 		}
+		catch (Exception ex)
+		{
+			return BadRequest(ex);
+		}
 
-		if (isTranslationExist)
-			return BadRequest("The transaltion is already exist in database");
-
-		return null;
+		return Ok();
 	}
+
+	/*[HttpPut("{id}")]
+	public async Task<ActionResult> Edit(Guid id, TranslationUpdateRequest translationUpdateRequest)
+	{
+		if (translationUpdateRequest.SourceWordId == translationUpdateRequest.TargetWordId)
+			return BadRequest("You can not edit translation for the same language as source one");
+
+		return Ok(await Mediator.Send(new EditTranslations.Command
+		{
+			TranslationId = id,
+			TranslationUpdateRequest = translationUpdateRequest,
+			Mediator = Mediator
+		}));
+	}*/
+
+
 
 	[HttpDelete("{id}")]
 	public async Task<ActionResult> Delete(Guid id)
 	{
-		return Ok(await Mediator.Send(new DeleteTranslations.Command { Id = id }));
+		//с существующим нормально удаляет, с несущ 500 ошибка
+		try
+		{
+			await Mediator.Send(new DeleteTranslations.Command { Id = id });
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(ex);
+		}
+
+		return Ok();
 	}
 }

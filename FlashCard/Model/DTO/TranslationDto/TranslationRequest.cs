@@ -8,13 +8,4 @@ public class TranslationRequest
 	public Guid SourceLanguageId { get; set; }
 	[Required]
 	public Guid TargetLanguageId { get; set; }
-
-	public Translation ToTranslation()
-	{
-		return new Translation
-		{
-			SourceWordId = SourceLanguageId,
-			TargetWordId = TargetLanguageId
-		};
-	}
 }

@@ -23,6 +23,11 @@ public class DeleteTranslations
 			var translation = await _context.Translations.Where(x => x.TranslationId == request.Id)
 														.FirstOrDefaultAsync(cancellationToken);
 
+			if (translation == null)
+			{
+				throw new Exception("The translation is not found");
+			}
+
 			_context.Remove(translation);
 
 			await _context.SaveChangesAsync();

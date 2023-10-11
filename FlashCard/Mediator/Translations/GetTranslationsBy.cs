@@ -1,4 +1,6 @@
-﻿using FlashCard.Model;
+﻿using AutoMapper;
+using FlashCard.Model;
+using FlashCard.Model.DTO.TranslationDto;
 using FlashCard.Shared.Services.Translations;
 using MediatR;
 
@@ -6,7 +8,7 @@ namespace FlashCard.Mediator.Translations;
 
 public class GetTranslationsBy
 {
-	public class Query : IRequest<List<Translation>>
+	public class Query : IRequest<List<TranslationResponse>>
 	{
 		public TypeOfQueryTranslation TypeOfQueryTranslation { get; set; }
 		public string Level { get; set; }
@@ -14,15 +16,17 @@ public class GetTranslationsBy
 		public string TargetLanguage { get; set; }
 		public int Quantity { get; set; }
 	}
-	public class Handler : IRequestHandler<Query, List<Translation>>
+	public class Handler : IRequestHandler<Query, List<TranslationResponse>>
 	{
 		private readonly FlashCardDbContext _context;
+		private readonly IMapper _mapper;
 
-		public Handler(FlashCardDbContext context)
+		public Handler(FlashCardDbContext context, IMapper mapper)
 		{
 			_context = context;
+			_mapper = mapper;
 		}
-		public async Task<List<Translation>> Handle(Query request, CancellationToken cancellationToken)
+		public async Task<List<TranslationResponse>> Handle(Query request, CancellationToken cancellationToken)
 		{
 			var translations = new List<Translation>();
 
@@ -48,7 +52,9 @@ public class GetTranslationsBy
 					break;
 			}
 
-			return translations;
+			var translationResponse = _mapper.Map<List<TranslationResponse>>(translations);
+
+			return translationResponse;
 
 			/*return words;
 

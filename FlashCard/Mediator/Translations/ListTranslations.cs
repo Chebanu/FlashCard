@@ -1,4 +1,6 @@
-﻿using FlashCard.Model;
+﻿/*using AutoMapper;
+using FlashCard.Model;
+using FlashCard.Model.DTO.TranslationDto;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,24 +8,26 @@ namespace FlashCard.Mediator.Translations;
 
 public class ListTranslations
 {
-	public class Query : IRequest<List<Translation>>
+	public class Query : IRequest<List<TranslationResponse>>
 	{
 		public string SourceLanguage { get; set; }
 		public string TargetLanguage { get; set; }
 	}
 
-	public class Handler : IRequestHandler<Query, List<Translation>>
+	public class Handler : IRequestHandler<Query, List<TranslationResponse>>
 	{
 		public readonly FlashCardDbContext _context;
+		private readonly IMapper _mapper;
 
-		public Handler(FlashCardDbContext context)
+		public Handler(FlashCardDbContext context, IMapper mapper)
 		{
 			_context = context;
+			_mapper = mapper;
 		}
 
-		public async Task<List<Translation>> Handle(Query request, CancellationToken cancellationToken)
+		public async Task<List<TranslationResponse>> Handle(Query request, CancellationToken cancellationToken)
 		{
-			return await _context.Translations.Include(t => t.SourceWord)
+			var translation = await _context.Translations.Include(t => t.SourceWord)
 												.Include(l => l.SourceWord.Level)
 												.Include(l => l.SourceWord.Language)
 												.Include(t => t.TargetWord)
@@ -35,11 +39,10 @@ public class ListTranslations
 														request.TargetLanguage)
 											.ToListAsync();
 
-			/*var translations = await context.Translations
-				.Where(t => t.SourceWord.Language.LanguageName == sourceLanguage &&
-							t.TargetWord.Language.LanguageName == targetLanguage)
-				.ToListAsync();
-			*/
+			 var responseTranslation = _mapper.Map<List<TranslationResponse>>(translation);
+
+			return responseTranslation;
 		}
 	}
 }
+*/
