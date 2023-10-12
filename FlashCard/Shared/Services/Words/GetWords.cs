@@ -11,7 +11,7 @@ public enum TypeOfQueryWord
 	Language
 }
 
-public class GetWord
+public class GetWords
 {
 	private static async Task<List<Word>> GetFlashCards(FlashCardDbContext context,
 													Func<IQueryable<Word>, IQueryable<Word>> filter = null)
@@ -73,11 +73,4 @@ public class GetWord
 
 		return words;
 	}
-
-	/*public async Task<List<Word>> GetWrongWordsForQuiz(FlashCardDbContext _context, string targetLanguage)
-	{
-		var words = new List<Word>();
-
-		return words = await _context.Words.Where(x => x.Language.LanguageName == targetLanguage).ToListAsync();
-	}*/
 }

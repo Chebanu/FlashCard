@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FlashCard.Model.DTO.TranslationDto;
+using FlashCard.Model.DTO.WordDto;
 
 namespace FlashCard.Extentions;
 
@@ -27,7 +28,23 @@ public class MappingProfiles : Profile
 			.ForMember(dest => dest.TargetWordId, opt => opt.MapFrom(src => src.TargetWordId));
 
 
-		CreateMap<Translation, Translation>();
-		CreateMap<Word, Word>();
+		CreateMap<WordRequest, Word>()
+			.ForMember(dest => dest.WordId, opt => opt.Ignore())
+			.ForMember(dest => dest.Language, opt => opt.Ignore())
+			.ForMember(dest => dest.Level, opt => opt.Ignore())
+			.ForMember(dest => dest.WordText, opt => opt.MapFrom(src => src.WordText))
+			.ForMember(dest => dest.LevelId, opt => opt.MapFrom(src => src.LevelId))
+			.ForMember(dest => dest.LanguageId, opt => opt.MapFrom(src => src.LanguageId));
+
+		CreateMap<Word, WordResponse>()
+			.ForMember(dest => dest.WordText, opt => opt.MapFrom(src => src.WordText))
+			.ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level.LevelName))
+			.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl != null ? src.ImageUrl : ""))
+			.ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.Language.LanguageName));
+
+		CreateMap<WordUpdateRequest, Word>()
+			.ForMember(dest => dest.WordText, opt => opt.MapFrom(src => src.WordText))
+			.ForMember(dest => dest.LevelId, opt => opt.MapFrom(src => src.LevelId))
+			.ForMember(dest => dest.LanguageId, opt => opt.MapFrom(src => src.LanguageId));
 	}
 }

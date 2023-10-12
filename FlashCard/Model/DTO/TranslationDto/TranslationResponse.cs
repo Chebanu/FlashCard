@@ -8,4 +8,5 @@ public class TranslationResponse
 	public string TargetLanguageName { get; set; }
 	public string SourceWordLevelName { get; set; }
 	public string? Image { get; set; }
+
 }

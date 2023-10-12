@@ -1,24 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FlashCard.Mediator.Words;
 using FlashCard.Shared.Services.Translations;
+using FlashCard.Model.DTO.WordDto;
 
 namespace FlashCard.Controllers;
 
 public class WordsController : BaseApiController
 {
 	[HttpGet]
-	public async Task<ActionResult<List<Word>>> GetWords()
+	public async Task<ActionResult<List<WordResponse>>> GetWords()
 	{
-		return await Mediator.Send(new ListWords.Query
+		return await Mediator.Send(new GetWordsBy.Query
 		{
 			TypeOfQueryWord = TypeOfQueryWord.All
 		});
 	}
 
 	[HttpGet("byLanguage/{targetLanguage}")]
-	public async Task<ActionResult<List<Word>>> GetWordsByLanguage(string targetLanguage)
+	public async Task<ActionResult<List<WordResponse>>> GetWordsByLanguage(string targetLanguage)
 	{
-		return await Mediator.Send(new ListWords.Query
+		return await Mediator.Send(new GetWordsBy.Query
 		{
 			TypeOfQueryWord = TypeOfQueryWord.Language,
 			TargetLanguage = targetLanguage
@@ -26,9 +27,11 @@ public class WordsController : BaseApiController
 	}
 
 	[HttpGet("byQuantity/{quantity}/{targetLanguage}")]
-	public async Task<ActionResult<List<Word>>> GetWordsByQuantity(string targetLanguage, int quantity)
+	public async Task<ActionResult<List<WordResponse>>> GetWordsByQuantity(string targetLanguage, int quantity)
 	{
-		return await Mediator.Send(new ListWords.Query
+		//добавить проверку на существование языка
+		//upd, проверки не будет, будет фильтр на уровне клиента
+		return await Mediator.Send(new GetWordsBy.Query
 		{
 			TypeOfQueryWord = TypeOfQueryWord.Quantity,
 			TargetLanguage = targetLanguage,
@@ -38,51 +41,61 @@ public class WordsController : BaseApiController
 
 
 	[HttpGet("{id}")]
-	public async Task<ActionResult<Word>> GetWord(Guid id)
+	public async Task<ActionResult<WordResponse>> GetWord(Guid id)
 	{
-		return await Mediator.Send(new DetailsWordsById.Query { Id = id });
+		var word = new WordResponse();
+
+		try
+		{
+			word = await Mediator.Send(new DetailsWordsById.Query { Id = id });
+		}
+		catch(Exception ex)
+		{
+			return BadRequest($"{ex}");
+		}
+
+		return Ok(word);
 	}
 
 	[HttpPost]
-	public async Task<ActionResult> Create(Word word)
+	public async Task<ActionResult> Create(WordRequest wordRequest)
 	{
-		var result = await CheckIfWordExists(word);
-
-		if (result != null)
-			return result;
-
-		return Ok(await Mediator.Send(new CreateWords.Command { Word = word }));
-	}
-
-	[HttpPut("{id}")]
-	public async Task<ActionResult> Edit(Guid id, Word word)
-	{
-		var result = await CheckIfWordExists(word);
-
-		if (result != null)
-			return result;
-
-		word.WordId = id;
-		return Ok(await Mediator.Send(new EditWords.Command { Word = word }));
-	}
-
-	private async Task<ActionResult> CheckIfWordExists(Word word)
-	{
-		var isWordExist = await Mediator.Send(new IsWordExist.Query
+		try
 		{
-			WordText = word.WordText,
-			LanguageId = word.LanguageId
-		});
+			await Mediator.Send(new CreateWords.Command
+			{
+				WordRequest = wordRequest,
+				Mediator = Mediator
+			});
+		}
+		catch(Exception ex)
+		{
+			return BadRequest($"{ex}");
+		}
 
-		if (isWordExist)
-			return BadRequest("The word is already exist in database");
-
-		return null;
+		return Ok();
 	}
+	/*
+		[HttpPut("{id}")]
+		public async Task<ActionResult> Edit(Guid id, Word word)
+		{
+			word.WordId = id;
+			return Ok(await Mediator.Send(new EditWords.Command { Word = word }));
+		}*/
+
 
 	[HttpDelete("{id}")]
 	public async Task<ActionResult> Delete(Guid id)
 	{
-		return Ok(await Mediator.Send(new DeleteWords.Command { Id = id }));
+		try
+		{
+			await Mediator.Send(new DeleteWords.Command { Id = id });
+		}
+		catch(ArgumentNullException ex)
+		{
+			return BadRequest($"{ex}");
+		}
+
+		return Ok();
 	}
 }

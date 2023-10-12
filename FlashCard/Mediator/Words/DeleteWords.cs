@@ -20,8 +20,13 @@ public class DeleteWords
 		}
 		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
 		{
-			var translation = await _context.Words.Include(w => w.Language)
-			.Include(w => w.Level).Where(p => p.WordId == request.Id).FirstOrDefaultAsync(cancellationToken);
+			var translation = await _context.Words.Where(p => p.WordId == request.Id)
+												.FirstOrDefaultAsync(cancellationToken);
+
+			if (translation == null)
+			{
+				throw new ArgumentNullException("The word doesn`t exist");
+			}
 
 			_context.Remove(translation);
 

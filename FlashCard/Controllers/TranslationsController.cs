@@ -11,7 +11,7 @@ public class TranslationsController : BaseApiController
 	public async Task<ActionResult<List<TranslationResponse>>> GetTranslations(string sourceLanguage, string targetLanguage)
 	{
 		if (sourceLanguage == targetLanguage)
-			return BadRequest("Source language and target language must be different");
+			return BadRequest("Source and target languages must be different");
 
 		var translations = await Mediator.Send(new GetTranslationsBy.Query
 		{
@@ -27,20 +27,25 @@ public class TranslationsController : BaseApiController
 			TargetLanguage = sourceLanguage
 		});
 
-		foreach (var translation in translations)
+		var allTranslations = translations.Concat(reverseTranslations).ToList();
+
+		var uniqueTranslations = new List<TranslationResponse>();
+		foreach (var translation in allTranslations)
 		{
-			(translation.SourceWord, translation.TargetWord) =
-				(translation.TargetWord, translation.SourceWord);
-			(translation.SourceLanguageName, translation.TargetLanguageName) =
-				(translation.TargetLanguageName, translation.SourceLanguageName);
+			bool isDuplicate = uniqueTranslations.Any(t =>
+				(t.SourceWord == translation.SourceWord && t.TargetWord == translation.TargetWord) ||
+				(t.SourceWord == translation.TargetWord && t.TargetWord == translation.SourceWord));
+
+			if (!isDuplicate)
+			{
+				uniqueTranslations.Add(translation);
+			}
 		}
 
-		//перевернутый ответ, но правильный по структуре(немного доделать)
-
-		var concatTranslation = translations.Concat(reverseTranslations).Distinct().ToList();
-
-		return Ok(concatTranslation);
+		return Ok(uniqueTranslations);
 	}
+
+
 
 	[HttpGet("{id}")]
 	public async Task<ActionResult<TranslationResponse>> GetTranslation(Guid id)
@@ -85,7 +90,7 @@ public class TranslationsController : BaseApiController
 	{
 		//сейм щит
 		if (sourceLanguage == targetLanguage)
-			return BadRequest("Source language and target language must be different");
+			return BadRequest("Source and target languages must be different");
 
 		var translations = await Mediator.Send(new GetTranslationsBy.Query
 		{
@@ -114,7 +119,6 @@ public class TranslationsController : BaseApiController
 	[HttpPost]
 	public async Task<ActionResult> Create(TranslationRequest translationRequest)
 	{
-		//работает отлично
 		if (translationRequest.SourceLanguageId == translationRequest.TargetLanguageId)
 			return BadRequest("You can not add translation for the same language as source one");
 
@@ -126,9 +130,13 @@ public class TranslationsController : BaseApiController
 				Mediator = Mediator
 			});
 		}
+		catch (ArgumentNullException ex)
+		{
+			return BadRequest($"Argument exception, {ex}");
+		}
 		catch (Exception ex)
 		{
-			return BadRequest(ex);
+			return BadRequest($"{ex}");
 		}
 
 		return Ok();
@@ -153,14 +161,13 @@ public class TranslationsController : BaseApiController
 	[HttpDelete("{id}")]
 	public async Task<ActionResult> Delete(Guid id)
 	{
-		//с существующим нормально удаляет, с несущ 500 ошибка
 		try
 		{
 			await Mediator.Send(new DeleteTranslations.Command { Id = id });
 		}
 		catch (Exception ex)
 		{
-			return BadRequest(ex);
+			return BadRequest($"{ex}");
 		}
 
 		return Ok();

@@ -36,7 +36,7 @@ public class EditTranslations
 
 			translation = request.TranslationUpdateRequest.ToTranslation();
 
-			var isExist = await TranslationCheker.CheckIfTranslationExists(translation, request.Mediator);
+			var isExist = await TranslationChecker.CheckIfTranslationExists(translation, request.Mediator);
 
 			/*_mapper.Map()
 			Temporarily doesn't work, fix soon*/

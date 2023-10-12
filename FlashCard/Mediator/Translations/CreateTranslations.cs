@@ -32,11 +32,11 @@ public class CreateTranslations
 
 			var translation = _mapper.Map<Translation>(request.TranslationRequest);
 
-			var isExist = await TranslationCheker.CheckIfTranslationExists(translation, request.Mediator);
+			var isExist = await TranslationChecker.CheckIfTranslationExists(translation, request.Mediator);
 
 			if (isExist)
 				throw new Exception("The translation is already exist");
-			
+
 			translation.TranslationId = Guid.NewGuid();
 
 			_context.Translations.Add(translation);

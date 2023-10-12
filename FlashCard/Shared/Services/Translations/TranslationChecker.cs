@@ -3,7 +3,7 @@ using MediatR;
 
 namespace FlashCard.Shared.Services.Translations;
 
-public class TranslationCheker
+public class TranslationChecker
 {
 	public static async Task<bool> CheckIfTranslationExists(Translation translation, IMediator mediator)
 	{
