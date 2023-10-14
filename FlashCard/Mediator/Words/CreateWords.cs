@@ -34,11 +34,11 @@ public class CreateWords
 			var word = _mapper.Map<Word>(request.WordRequest);
 
 			var language = await _context.Languages.FirstOrDefaultAsync(l => l.LanguageName ==
-																		request.WordRequest.Language.ToString());
+																request.WordRequest.Language.ToString());
 			var level = await _context.Levels.FirstOrDefaultAsync(l => l.LevelName ==
 																		request.WordRequest.Level.ToString());
 			var theme = await _context.Themes.FirstOrDefaultAsync(t => t.ThemeName ==
-																		request.WordRequest.ThemeName);
+																request.WordRequest.ThemeName);
 
 			if (language == null || level == null || theme == null)
 				throw new ArgumentNullException("Something went wrong, 1 or more parameters don't match");

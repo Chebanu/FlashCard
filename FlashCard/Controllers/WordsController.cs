@@ -49,7 +49,7 @@ public class WordsController : BaseApiController
 		{
 			word = await Mediator.Send(new DetailsWordsById.Query { Id = id });
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			return BadRequest(ex.Message);
 		}
@@ -68,20 +68,19 @@ public class WordsController : BaseApiController
 				Mediator = Mediator
 			});
 		}
-		catch(Exception ex)
+		catch (Exception ex)
 		{
 			return BadRequest(ex.Message);
 		}
 
 		return Ok();
 	}
-	/*
-		[HttpPut("{id}")]
-		public async Task<ActionResult> Edit(Guid id, Word word)
-		{
-			word.WordId = id;
-			return Ok(await Mediator.Send(new EditWords.Command { Word = word }));
-		}*/
+
+	[HttpPut]
+	public async Task<ActionResult> Edit(WordUpdateRequest wordUpdateRequest)
+	{
+		return Ok(await Mediator.Send(new EditWords.Command { WordUpdateRequest = wordUpdateRequest, Mediator = Mediator }));
+	}
 
 
 	[HttpDelete("{id}")]
@@ -91,7 +90,7 @@ public class WordsController : BaseApiController
 		{
 			await Mediator.Send(new DeleteWords.Command { Id = id });
 		}
-		catch(ArgumentNullException ex)
+		catch (ArgumentNullException ex)
 		{
 			return BadRequest(ex.Message);
 		}

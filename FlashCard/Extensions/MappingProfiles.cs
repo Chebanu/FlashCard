@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FlashCard.Model.DTO.TranslationDto;
 using FlashCard.Model.DTO.WordDto;
+using FlashCard.Shared.Enums;
 
 namespace FlashCard.Extentions;
 
@@ -31,21 +32,35 @@ public class MappingProfiles : Profile
 		CreateMap<WordRequest, Word>()
 			.ForMember(dest => dest.WordText, opt => opt.MapFrom(src => src.WordText))
 			.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+			.ForMember(dest => dest.Theme, opt => opt.Ignore())
 			.ForMember(dest => dest.Language, opt => opt.Ignore())
 			.ForMember(dest => dest.Level, opt => opt.Ignore())
 			.ForMember(dest => dest.WordId, opt => opt.Ignore());
 
 		CreateMap<Word, WordResponse>()
+			.ForMember(dest => dest.WordId, opt => opt.MapFrom(src => src.WordId))
 			.ForMember(dest => dest.WordText, opt => opt.MapFrom(src => src.WordText))
 			.ForMember(dest => dest.Level, opt => opt.MapFrom(src => src.Level.LevelName))
 			.ForMember(dest => dest.Theme, opt => opt.MapFrom(src => src.Theme.ThemeName))
 			.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
-			.ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.Language.LanguageName))
-			.ReverseMap();
+			.ForMember(dest => dest.Language, opt => opt.MapFrom(src => src.Language.LanguageName));
+
+		CreateMap<WordResponse, WordUpdateRequest>()
+			.ForMember(dest => dest.WordId, opt => opt.MapFrom(src => src.WordId))
+			.ForMember(dest => dest.WordText, opt => opt.MapFrom(src => src.WordText))
+			.ForMember(dest => dest.ThemeName, opt => opt.MapFrom(src => src.Theme))
+			.ForMember(dest => dest.Language, opt => opt.MapFrom(src =>
+												Enum.Parse<LanguageOfTheWord>(src.Language)))
+			.ForMember(dest => dest.Level, opt => opt.MapFrom(src =>
+												Enum.Parse<LevelOfTheWord>(src.Level)))
+			.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl));
 
 		CreateMap<WordUpdateRequest, Word>()
+			.ForMember(dest => dest.WordId, opt => opt.MapFrom(src => src.WordId))
 			.ForMember(dest => dest.WordText, opt => opt.MapFrom(src => src.WordText))
-			.ForMember(dest => dest.LevelId, opt => opt.MapFrom(src => src.LevelId))
-			.ForMember(dest => dest.LanguageId, opt => opt.MapFrom(src => src.LanguageId));
+			.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+			.ForMember(dest => dest.Language, opt => opt.Ignore())
+			.ForMember(dest => dest.Theme, opt => opt.Ignore())
+			.ForMember(dest => dest.Level, opt => opt.Ignore());
 	}
 }
