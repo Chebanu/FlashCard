@@ -3,6 +3,8 @@
 public class WordUpdateRequest
 {
 	public string WordText { get; set; }
+	public Guid ThemeId { get; set; }
 	public Guid LanguageId { get; set; }
 	public Guid LevelId { get; set; }
+	public string Image { get; set; }
 }

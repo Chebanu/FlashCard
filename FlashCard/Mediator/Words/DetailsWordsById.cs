@@ -25,8 +25,13 @@ public class DetailsWordsById
 
 		public async Task<WordResponse> Handle(Query request, CancellationToken cancellationToken)
 		{
-			var word = await _context.Words.Where(x=>x.WordId == request.Id)
+			var word = await _context.Words.Where(x => x.WordId == request.Id)
 											.FirstOrDefaultAsync(cancellationToken);
+
+			if (word == null)
+			{
+				throw new Exception("The word doesn't exist");
+			}
 
 			var wordResponse = _mapper.Map<WordResponse>(word);
 

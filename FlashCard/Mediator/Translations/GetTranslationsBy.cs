@@ -14,6 +14,7 @@ public class GetTranslationsBy
 		public string Level { get; set; }
 		public string SourceLanguage { get; set; }
 		public string TargetLanguage { get; set; }
+		public string Theme { get; set; }
 		public int Quantity { get; set; }
 	}
 	public class Handler : IRequestHandler<Query, List<TranslationResponse>>
@@ -33,20 +34,31 @@ public class GetTranslationsBy
 			switch (request.TypeOfQueryTranslation)
 			{
 				case TypeOfQueryTranslation.All:
-					translations = await GetTranslation.GetFalshCardsByParameters(_context,
+					translations = await TranslationDistributor.GetFalshCardsByParameters(_context,
 															request.TypeOfQueryTranslation,
 															request.SourceLanguage,
 															request.TargetLanguage);
 					break;
 				case TypeOfQueryTranslation.Level:
-					translations = await GetTranslation.GetFalshCardsByParameters(_context, request.TypeOfQueryTranslation, request.SourceLanguage, request.TargetLanguage, request.Level);
+					translations = await TranslationDistributor.GetFalshCardsByParameters(_context,
+															request.TypeOfQueryTranslation,
+															request.SourceLanguage,
+															request.TargetLanguage,
+															level: request.Level);
 					break;
 				case TypeOfQueryTranslation.Quantity:
-					translations = await GetTranslation.GetFalshCardsByParameters(_context,
+					translations = await TranslationDistributor.GetFalshCardsByParameters(_context,
 															request.TypeOfQueryTranslation,
 															request.SourceLanguage,
 															request.TargetLanguage,
 															quantity: request.Quantity);
+					break;
+				case TypeOfQueryTranslation.Theme:
+					translations = await TranslationDistributor.GetFalshCardsByParameters(_context,
+															request.TypeOfQueryTranslation,
+															request.SourceLanguage,
+															request.TargetLanguage,
+															theme: request.Theme);
 					break;
 				default:
 					break;

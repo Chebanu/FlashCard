@@ -16,13 +16,24 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 	public DbSet<Level> Levels { get; set; }
 	public DbSet<Word> Words { get; set; }
 	public DbSet<Translation> Translations { get; set; }
+	public DbSet<Theme> Themes { get; set; }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<Language>().HasKey(l => l.LanguageId);
 		modelBuilder.Entity<Level>().HasKey(l => l.LevelId);
+		modelBuilder.Entity<Theme>().HasKey(t => t.ThemeId);
 		modelBuilder.Entity<Word>().HasKey(w => w.WordId);
 		modelBuilder.Entity<Translation>().HasKey(t => t.TranslationId);
+
+		modelBuilder.Entity<Theme>()
+			.HasOne(w => w.Language)
+			.WithMany()
+			.HasForeignKey(w => w.LanguageId);
+
+		modelBuilder.Entity<Theme>()
+			.HasIndex(t => new { t.LanguageId, t.ThemeName })
+			.IsUnique();
 
 		modelBuilder.Entity<Word>()
 			.HasOne(w => w.Language)
@@ -35,7 +46,13 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 			.HasForeignKey(w => w.LevelId);
 
 		modelBuilder.Entity<Word>()
-			.HasIndex(w => new { w.LanguageId, w.WordText })
+			.HasOne(w => w.Theme)
+			.WithMany()
+			.HasForeignKey(w => w.ThemeId)
+			.OnDelete(DeleteBehavior.NoAction);
+
+		modelBuilder.Entity<Word>()
+			.HasIndex(w => new { w.LanguageId, w.ThemeId, w.WordText })
 			.IsUnique();
 
 		modelBuilder.Entity<Translation>()
@@ -62,6 +79,14 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 		foreach (Language language in languages)
 		{
 			modelBuilder.Entity<Language>().HasData(language);
+		}
+
+		string themeJSON = File.ReadAllText("theme.json");
+		List<Theme>? themes = JsonSerializer.Deserialize<List<Theme>>(themeJSON);
+
+		foreach (Theme theme in themes)
+		{
+			modelBuilder.Entity<Theme>().HasData(theme);
 		}
 
 		string levelJSON = File.ReadAllText("levels.json");

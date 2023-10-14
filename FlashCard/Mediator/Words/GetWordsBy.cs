@@ -14,6 +14,7 @@ public class GetWordsBy
 		public string TargetLanguage { get; set; }
 		public string Level { get; set; }
 		public int Quantity { get; set; }
+		public string Theme { get; set; }
 	}
 
 	public class Handler : IRequestHandler<Query, List<WordResponse>>
@@ -34,16 +35,31 @@ public class GetWordsBy
 			switch (request.TypeOfQueryWord)
 			{
 				case TypeOfQueryWord.All:
-					words = await GetWords.GetFalshCardsByParameters(_context, request.TypeOfQueryWord);
+					words = await GetWords.GetFalshCardsByParameters(_context,
+																	request.TypeOfQueryWord);
 					break;
 				case TypeOfQueryWord.Level:
-					words = await GetWords.GetFalshCardsByParameters(_context, request.TypeOfQueryWord, request.TargetLanguage, request.Level);
+					words = await GetWords.GetFalshCardsByParameters(_context,
+																	request.TypeOfQueryWord,
+																	request.TargetLanguage,
+																	request.Level);
 					break;
 				case TypeOfQueryWord.Quantity:
-					words = await GetWords.GetFalshCardsByParameters(_context, request.TypeOfQueryWord, request.TargetLanguage, quantity: request.Quantity);
+					words = await GetWords.GetFalshCardsByParameters(_context,
+																	request.TypeOfQueryWord,
+																	request.TargetLanguage,
+																	quantity: request.Quantity);
 					break;
 				case TypeOfQueryWord.Language:
-					words = await GetWords.GetFalshCardsByParameters(_context, request.TypeOfQueryWord, request.TargetLanguage);
+					words = await GetWords.GetFalshCardsByParameters(_context,
+																	request.TypeOfQueryWord,
+																	request.TargetLanguage);
+					break;
+				case TypeOfQueryWord.Theme:
+					words = await GetWords.GetFalshCardsByParameters(_context,
+																	request.TypeOfQueryWord,
+																	request.TargetLanguage,
+																	theme: request.Theme);
 					break;
 				default:
 					break;

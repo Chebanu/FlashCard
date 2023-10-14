@@ -51,7 +51,7 @@ public class WordsController : BaseApiController
 		}
 		catch(Exception ex)
 		{
-			return BadRequest($"{ex}");
+			return BadRequest(ex.Message);
 		}
 
 		return Ok(word);
@@ -70,7 +70,7 @@ public class WordsController : BaseApiController
 		}
 		catch(Exception ex)
 		{
-			return BadRequest($"{ex}");
+			return BadRequest(ex.Message);
 		}
 
 		return Ok();
@@ -93,7 +93,7 @@ public class WordsController : BaseApiController
 		}
 		catch(ArgumentNullException ex)
 		{
-			return BadRequest($"{ex}");
+			return BadRequest(ex.Message);
 		}
 
 		return Ok();

@@ -13,45 +13,25 @@ public class TranslationsController : BaseApiController
 		if (sourceLanguage == targetLanguage)
 			return BadRequest("Source and target languages must be different");
 
-		var translations = await Mediator.Send(new GetTranslationsBy.Query
-		{
-			TypeOfQueryTranslation = TypeOfQueryTranslation.All,
-			SourceLanguage = sourceLanguage,
-			TargetLanguage = targetLanguage
-		});
-
-		var reverseTranslations = await Mediator.Send(new GetTranslationsBy.Query
-		{
-			TypeOfQueryTranslation = TypeOfQueryTranslation.All,
-			SourceLanguage = targetLanguage,
-			TargetLanguage = sourceLanguage
-		});
-
-		var allTranslations = translations.Concat(reverseTranslations).ToList();
-
-		var uniqueTranslations = new List<TranslationResponse>();
-		foreach (var translation in allTranslations)
-		{
-			bool isDuplicate = uniqueTranslations.Any(t =>
-				(t.SourceWord == translation.SourceWord && t.TargetWord == translation.TargetWord) ||
-				(t.SourceWord == translation.TargetWord && t.TargetWord == translation.SourceWord));
-
-			if (!isDuplicate)
-			{
-				uniqueTranslations.Add(translation);
-			}
-		}
+		var uniqueTranslations = await TranslationDistributor.Distribute(Mediator,
+																			TypeOfQueryTranslation.All,
+																			sourceLanguage,
+																			targetLanguage);
 
 		return Ok(uniqueTranslations);
 	}
 
-
-
 	[HttpGet("{id}")]
 	public async Task<ActionResult<TranslationResponse>> GetTranslation(Guid id)
 	{
-		// работает, необходимо добавить проверку на существования перевода
-		return await Mediator.Send(new DetailsTranslations.Query { Id = id });
+		try
+		{
+			return await Mediator.Send(new DetailsTranslations.Query { Id = id });
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(ex.Message);
+		}
 	}
 
 	[HttpGet("quantity/{quantity}/{sourceLanguage}/{targetLanguage}")]
@@ -61,28 +41,13 @@ public class TranslationsController : BaseApiController
 		if (quantity <= 0 || sourceLanguage == targetLanguage)
 			return BadRequest("Something went wrong");
 
-		var translations = await Mediator.Send(new GetTranslationsBy.Query
-		{
-			TypeOfQueryTranslation = TypeOfQueryTranslation.Quantity,
-			Quantity = quantity,
-			SourceLanguage = sourceLanguage,
-			TargetLanguage = targetLanguage
-		});
+		var uniqueTranslations = await TranslationDistributor.Distribute(Mediator,
+																			TypeOfQueryTranslation.All,
+																			sourceLanguage,
+																			targetLanguage,
+																			quantity: quantity);
 
-		var reverseTranslations = await Mediator.Send(new GetTranslationsBy.Query
-		{
-			TypeOfQueryTranslation = TypeOfQueryTranslation.Quantity,
-			Quantity = quantity,
-			SourceLanguage = targetLanguage,
-			TargetLanguage = sourceLanguage
-		});
-
-		foreach (var translation in translations)
-			(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
-
-		var concatTranslation = translations.Concat(reverseTranslations).Distinct().Take(quantity).ToList();
-
-		return concatTranslation;
+		return Ok(uniqueTranslations.Take(quantity));
 	}
 
 	[HttpGet("level/{level}/{sourceLanguage}/{targetLanguage}")]
@@ -92,34 +57,19 @@ public class TranslationsController : BaseApiController
 		if (sourceLanguage == targetLanguage)
 			return BadRequest("Source and target languages must be different");
 
-		var translations = await Mediator.Send(new GetTranslationsBy.Query
-		{
-			TypeOfQueryTranslation = TypeOfQueryTranslation.Level,
-			Level = level,
-			SourceLanguage = sourceLanguage,
-			TargetLanguage = targetLanguage
-		});
+		var uniqueTranslations = await TranslationDistributor.Distribute(Mediator,
+																			TypeOfQueryTranslation.Level,
+																			sourceLanguage,
+																			targetLanguage,
+																			level: level);
 
-		var reverseTranslations = await Mediator.Send(new GetTranslationsBy.Query
-		{
-			TypeOfQueryTranslation = TypeOfQueryTranslation.Level,
-			Level = level,
-			SourceLanguage = targetLanguage,
-			TargetLanguage = sourceLanguage
-		});
-
-		foreach (var translation in translations)
-			(translation.SourceWord, translation.TargetWord) = (translation.TargetWord, translation.SourceWord);
-
-		var concatTranslation = translations.Concat(reverseTranslations).Distinct().ToList();
-
-		return concatTranslation;
+		return uniqueTranslations;
 	}
 
 	[HttpPost]
 	public async Task<ActionResult> Create(TranslationRequest translationRequest)
 	{
-		if (translationRequest.SourceLanguageId == translationRequest.TargetLanguageId)
+		if (translationRequest.SourceWord.Language.LanguageName == translationRequest.TargetWord.Language.LanguageName)
 			return BadRequest("You can not add translation for the same language as source one");
 
 		try
@@ -136,7 +86,7 @@ public class TranslationsController : BaseApiController
 		}
 		catch (Exception ex)
 		{
-			return BadRequest($"{ex}");
+			return BadRequest(ex.Message);
 		}
 
 		return Ok();
@@ -167,7 +117,7 @@ public class TranslationsController : BaseApiController
 		}
 		catch (Exception ex)
 		{
-			return BadRequest($"{ex}");
+			return BadRequest(ex.Message);
 		}
 
 		return Ok();

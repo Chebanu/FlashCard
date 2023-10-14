@@ -28,12 +28,19 @@ public class DetailsTranslations
 			var translation = await _context.Translations
 												.Include(t => t.SourceWord)
 												.Include(t => t.TargetWord)
-												.Include(s=>s.SourceWord.Language)
+												.Include(t => t.SourceWord.Theme.ThemeName)
+												.Include(t => t.TargetWord.Theme.ThemeName)
+												.Include(s => s.SourceWord.Language)
 												.Include(s => s.TargetWord.Language)
 												.Include(s => s.SourceWord.Level)
 												.Include(s => s.TargetWord.Level)
 											.Where(t => t.TranslationId == request.Id)
 										.FirstOrDefaultAsync(cancellationToken);
+
+			if (translation == null)
+			{
+				throw new Exception("The translation doesn't exist");
+			}
 
 			var translationResposne = _mapper.Map<TranslationResponse>(translation);
 

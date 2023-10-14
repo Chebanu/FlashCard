@@ -318,6 +318,65 @@ namespace FlashCard.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Theme", b =>
+                {
+                    b.Property<Guid>("ThemeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("LanguageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ThemeName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ThemeId");
+
+                    b.HasIndex("LanguageId", "ThemeName")
+                        .IsUnique()
+                        .HasFilter("[ThemeName] IS NOT NULL");
+
+                    b.ToTable("Themes");
+
+                    b.HasData(
+                        new
+                        {
+                            ThemeId = new Guid("6d325e08-b371-4e56-9dec-079013a7218b"),
+                            LanguageId = new Guid("54eae254-972b-4ce1-b08b-192f1ac2567f"),
+                            ThemeName = "General"
+                        },
+                        new
+                        {
+                            ThemeId = new Guid("9c1ccaaf-0e15-493e-b349-c6fe18f7537d"),
+                            LanguageId = new Guid("c840e6bf-2cfb-4eaf-8322-95bc9f70b975"),
+                            ThemeName = "Общее"
+                        },
+                        new
+                        {
+                            ThemeId = new Guid("0c8bde03-0e26-4581-8b24-9904f6fc133b"),
+                            LanguageId = new Guid("33526ce8-8842-49d6-8780-ba61be8069ab"),
+                            ThemeName = "Générale"
+                        },
+                        new
+                        {
+                            ThemeId = new Guid("a4f5698f-de36-4334-ab4f-7e3b5d58f23b"),
+                            LanguageId = new Guid("8703ae8f-2886-46e9-a0ec-4a28b29ceb5a"),
+                            ThemeName = "Allgemein"
+                        },
+                        new
+                        {
+                            ThemeId = new Guid("6c4a0485-c3d2-4e1b-888c-78ae793a8e30"),
+                            LanguageId = new Guid("14e4d292-a580-4a4d-9b0c-ed49a85179d2"),
+                            ThemeName = "General"
+                        },
+                        new
+                        {
+                            ThemeId = new Guid("3d9051b5-78c2-4e4a-991a-ab7fa22503b7"),
+                            LanguageId = new Guid("92965b17-28a6-4336-b13f-d1ff1c1b1444"),
+                            ThemeName = "Generale"
+                        });
+                });
+
             modelBuilder.Entity("Translation", b =>
                 {
                     b.Property<Guid>("TranslationId")
@@ -381,6 +440,9 @@ namespace FlashCard.Migrations
                     b.Property<Guid>("LevelId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ThemeId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("WordText")
                         .HasColumnType("nvarchar(450)");
 
@@ -388,7 +450,9 @@ namespace FlashCard.Migrations
 
                     b.HasIndex("LevelId");
 
-                    b.HasIndex("LanguageId", "WordText")
+                    b.HasIndex("ThemeId");
+
+                    b.HasIndex("LanguageId", "ThemeId", "WordText")
                         .IsUnique()
                         .HasFilter("[WordText] IS NOT NULL");
 
@@ -401,6 +465,7 @@ namespace FlashCard.Migrations
                             ImageUrl = "",
                             LanguageId = new Guid("54eae254-972b-4ce1-b08b-192f1ac2567f"),
                             LevelId = new Guid("495996f4-ee53-4769-a942-832a706b8178"),
+                            ThemeId = new Guid("6d325e08-b371-4e56-9dec-079013a7218b"),
                             WordText = "Hello"
                         },
                         new
@@ -409,6 +474,7 @@ namespace FlashCard.Migrations
                             ImageUrl = "",
                             LanguageId = new Guid("33526ce8-8842-49d6-8780-ba61be8069ab"),
                             LevelId = new Guid("495996f4-ee53-4769-a942-832a706b8178"),
+                            ThemeId = new Guid("0c8bde03-0e26-4581-8b24-9904f6fc133b"),
                             WordText = "Bonjour"
                         },
                         new
@@ -417,6 +483,7 @@ namespace FlashCard.Migrations
                             ImageUrl = "",
                             LanguageId = new Guid("8703ae8f-2886-46e9-a0ec-4a28b29ceb5a"),
                             LevelId = new Guid("495996f4-ee53-4769-a942-832a706b8178"),
+                            ThemeId = new Guid("a4f5698f-de36-4334-ab4f-7e3b5d58f23b"),
                             WordText = "Guten Tag"
                         },
                         new
@@ -425,6 +492,7 @@ namespace FlashCard.Migrations
                             ImageUrl = "",
                             LanguageId = new Guid("14e4d292-a580-4a4d-9b0c-ed49a85179d2"),
                             LevelId = new Guid("495996f4-ee53-4769-a942-832a706b8178"),
+                            ThemeId = new Guid("9c1ccaaf-0e15-493e-b349-c6fe18f7537d"),
                             WordText = "Hola"
                         },
                         new
@@ -433,6 +501,7 @@ namespace FlashCard.Migrations
                             ImageUrl = "",
                             LanguageId = new Guid("92965b17-28a6-4336-b13f-d1ff1c1b1444"),
                             LevelId = new Guid("495996f4-ee53-4769-a942-832a706b8178"),
+                            ThemeId = new Guid("3d9051b5-78c2-4e4a-991a-ab7fa22503b7"),
                             WordText = "Ciao"
                         },
                         new
@@ -441,6 +510,7 @@ namespace FlashCard.Migrations
                             ImageUrl = "",
                             LanguageId = new Guid("c840e6bf-2cfb-4eaf-8322-95bc9f70b975"),
                             LevelId = new Guid("495996f4-ee53-4769-a942-832a706b8178"),
+                            ThemeId = new Guid("9c1ccaaf-0e15-493e-b349-c6fe18f7537d"),
                             WordText = "Привет"
                         });
                 });
@@ -496,6 +566,17 @@ namespace FlashCard.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Theme", b =>
+                {
+                    b.HasOne("FlashCard.Model.Domain.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Language");
+                });
+
             modelBuilder.Entity("Translation", b =>
                 {
                     b.HasOne("Word", "SourceWord")
@@ -529,9 +610,17 @@ namespace FlashCard.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Theme", "Theme")
+                        .WithMany()
+                        .HasForeignKey("ThemeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Language");
 
                     b.Navigation("Level");
+
+                    b.Navigation("Theme");
                 });
 #pragma warning restore 612, 618
         }
