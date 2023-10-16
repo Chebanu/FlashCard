@@ -185,31 +185,11 @@ namespace FlashCard.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Themes",
-                columns: table => new
-                {
-                    ThemeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ThemeName = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Themes", x => x.ThemeId);
-                    table.ForeignKey(
-                        name: "FK_Themes_Languages_LanguageId",
-                        column: x => x.LanguageId,
-                        principalTable: "Languages",
-                        principalColumn: "LanguageId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Words",
                 columns: table => new
                 {
                     WordId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    WordText = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ThemeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WordText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -229,11 +209,6 @@ namespace FlashCard.Migrations
                         principalTable: "Levels",
                         principalColumn: "LevelId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Words_Themes_ThemeId",
-                        column: x => x.ThemeId,
-                        principalTable: "Themes",
-                        principalColumn: "ThemeId");
                 });
 
             migrationBuilder.CreateTable(
@@ -288,29 +263,16 @@ namespace FlashCard.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Themes",
-                columns: new[] { "ThemeId", "LanguageId", "ThemeName" },
-                values: new object[,]
-                {
-                    { new Guid("0c8bde03-0e26-4581-8b24-9904f6fc133b"), new Guid("33526ce8-8842-49d6-8780-ba61be8069ab"), "Générale" },
-                    { new Guid("3d9051b5-78c2-4e4a-991a-ab7fa22503b7"), new Guid("92965b17-28a6-4336-b13f-d1ff1c1b1444"), "Generale" },
-                    { new Guid("6c4a0485-c3d2-4e1b-888c-78ae793a8e30"), new Guid("14e4d292-a580-4a4d-9b0c-ed49a85179d2"), "General" },
-                    { new Guid("6d325e08-b371-4e56-9dec-079013a7218b"), new Guid("54eae254-972b-4ce1-b08b-192f1ac2567f"), "General" },
-                    { new Guid("9c1ccaaf-0e15-493e-b349-c6fe18f7537d"), new Guid("c840e6bf-2cfb-4eaf-8322-95bc9f70b975"), "Общее" },
-                    { new Guid("a4f5698f-de36-4334-ab4f-7e3b5d58f23b"), new Guid("8703ae8f-2886-46e9-a0ec-4a28b29ceb5a"), "Allgemein" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "Words",
-                columns: new[] { "WordId", "ImageUrl", "LanguageId", "LevelId", "ThemeId", "WordText" },
+                columns: new[] { "WordId", "ImageUrl", "LanguageId", "LevelId", "WordText" },
                 values: new object[,]
                 {
-                    { new Guid("11237266-725e-45b2-b426-7abee30acfde"), "", new Guid("54eae254-972b-4ce1-b08b-192f1ac2567f"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), new Guid("6d325e08-b371-4e56-9dec-079013a7218b"), "Hello" },
-                    { new Guid("b977b0c1-1284-4f3a-8329-9040965386ad"), "", new Guid("c840e6bf-2cfb-4eaf-8322-95bc9f70b975"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), new Guid("9c1ccaaf-0e15-493e-b349-c6fe18f7537d"), "Привет" },
-                    { new Guid("cd2225d1-a9d1-454f-af85-eac853bbd45c"), "", new Guid("92965b17-28a6-4336-b13f-d1ff1c1b1444"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), new Guid("3d9051b5-78c2-4e4a-991a-ab7fa22503b7"), "Ciao" },
-                    { new Guid("df279714-8907-4800-ac56-2ea35b84f467"), "", new Guid("33526ce8-8842-49d6-8780-ba61be8069ab"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), new Guid("0c8bde03-0e26-4581-8b24-9904f6fc133b"), "Bonjour" },
-                    { new Guid("f96065c6-6d30-430a-8c65-3ce715d6574c"), "", new Guid("8703ae8f-2886-46e9-a0ec-4a28b29ceb5a"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), new Guid("a4f5698f-de36-4334-ab4f-7e3b5d58f23b"), "Guten Tag" },
-                    { new Guid("fe8dcbad-1001-4d63-8eca-a97bef5ec6ec"), "", new Guid("14e4d292-a580-4a4d-9b0c-ed49a85179d2"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), new Guid("9c1ccaaf-0e15-493e-b349-c6fe18f7537d"), "Hola" }
+                    { new Guid("11237266-725e-45b2-b426-7abee30acfde"), "", new Guid("54eae254-972b-4ce1-b08b-192f1ac2567f"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), "Hello" },
+                    { new Guid("b977b0c1-1284-4f3a-8329-9040965386ad"), "", new Guid("c840e6bf-2cfb-4eaf-8322-95bc9f70b975"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), "Привет" },
+                    { new Guid("cd2225d1-a9d1-454f-af85-eac853bbd45c"), "", new Guid("92965b17-28a6-4336-b13f-d1ff1c1b1444"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), "Ciao" },
+                    { new Guid("df279714-8907-4800-ac56-2ea35b84f467"), "", new Guid("33526ce8-8842-49d6-8780-ba61be8069ab"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), "Bonjour" },
+                    { new Guid("f96065c6-6d30-430a-8c65-3ce715d6574c"), "", new Guid("8703ae8f-2886-46e9-a0ec-4a28b29ceb5a"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), "Guten Tag" },
+                    { new Guid("fe8dcbad-1001-4d63-8eca-a97bef5ec6ec"), "", new Guid("14e4d292-a580-4a4d-9b0c-ed49a85179d2"), new Guid("495996f4-ee53-4769-a942-832a706b8178"), "Hola" }
                 });
 
             migrationBuilder.InsertData(
@@ -364,13 +326,6 @@ namespace FlashCard.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Themes_LanguageId_ThemeName",
-                table: "Themes",
-                columns: new[] { "LanguageId", "ThemeName" },
-                unique: true,
-                filter: "[ThemeName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Translations_SourceWordId_TargetWordId",
                 table: "Translations",
                 columns: new[] { "SourceWordId", "TargetWordId" },
@@ -382,21 +337,14 @@ namespace FlashCard.Migrations
                 column: "TargetWordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Words_LanguageId_ThemeId_WordText",
+                name: "IX_Words_LanguageId",
                 table: "Words",
-                columns: new[] { "LanguageId", "ThemeId", "WordText" },
-                unique: true,
-                filter: "[WordText] IS NOT NULL");
+                column: "LanguageId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Words_LevelId",
                 table: "Words",
                 column: "LevelId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Words_ThemeId",
-                table: "Words",
-                column: "ThemeId");
         }
 
         /// <inheritdoc />
@@ -430,13 +378,10 @@ namespace FlashCard.Migrations
                 name: "Words");
 
             migrationBuilder.DropTable(
-                name: "Levels");
-
-            migrationBuilder.DropTable(
-                name: "Themes");
-
-            migrationBuilder.DropTable(
                 name: "Languages");
+
+            migrationBuilder.DropTable(
+                name: "Levels");
         }
     }
 }

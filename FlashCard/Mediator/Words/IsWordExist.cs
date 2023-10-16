@@ -10,7 +10,6 @@ public class IsWordExist
 	{
 		public string WordText { get; set; }
 		public Guid LanguageId { get; set; }
-		public Guid ThemeId { get; set; }
 	}
 	public class Handler : IRequestHandler<Query, bool>
 	{
@@ -23,7 +22,7 @@ public class IsWordExist
 
 		public async Task<bool> Handle(Query request, CancellationToken cancellationToken)
 		{
-			return await _context.Words.AnyAsync(w => w.WordText == request.WordText && w.LanguageId == request.LanguageId && w.ThemeId == request.ThemeId);
+			return await _context.Words.AnyAsync(w => w.WordText == request.WordText && w.LanguageId == request.LanguageId);
 		}
 	}
 }

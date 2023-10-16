@@ -37,7 +37,6 @@ public class TranslationsController : BaseApiController
 	[HttpGet("quantity/{quantity}/{sourceLanguage}/{targetLanguage}")]
 	public async Task<ActionResult<List<TranslationResponse>>> GetRandomQuantityOfCards(int quantity, string sourceLanguage, string targetLanguage)
 	{
-		//тоже самое что и с первым методом контроллера
 		if (quantity <= 0 || sourceLanguage == targetLanguage)
 			return BadRequest("Something went wrong");
 
@@ -69,7 +68,7 @@ public class TranslationsController : BaseApiController
 	[HttpPost]
 	public async Task<ActionResult> Create(TranslationRequest translationRequest)
 	{
-		if (translationRequest.SourceWord.Language.LanguageName == translationRequest.TargetWord.Language.LanguageName)
+		if (translationRequest.SourceLanguage == translationRequest.TargetLanguage)
 			return BadRequest("You can not add translation for the same language as source one");
 
 		try
@@ -92,19 +91,30 @@ public class TranslationsController : BaseApiController
 		return Ok();
 	}
 
-	/*[HttpPut("{id}")]
-	public async Task<ActionResult> Edit(Guid id, TranslationUpdateRequest translationUpdateRequest)
+	[HttpPut]
+	public async Task<ActionResult<TranslationResponse>> Edit(TranslationUpdateRequest translationUpdateRequest)
 	{
-		if (translationUpdateRequest.SourceWordId == translationUpdateRequest.TargetWordId)
+		if (translationUpdateRequest.SourceWord == translationUpdateRequest.TargetWord &&
+			translationUpdateRequest.SourceLanguage == translationUpdateRequest.TargetLanguage)
 			return BadRequest("You can not edit translation for the same language as source one");
 
-		return Ok(await Mediator.Send(new EditTranslations.Command
+		var newTranslation = new TranslationResponse();
+
+		try
 		{
-			TranslationId = id,
-			TranslationUpdateRequest = translationUpdateRequest,
-			Mediator = Mediator
-		}));
-	}*/
+			newTranslation = await Mediator.Send(new EditTranslations.Command
+			{
+				TranslationUpdateRequest = translationUpdateRequest,
+				Mediator = Mediator
+			});
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(ex.Message);
+		}
+
+		return newTranslation;
+	}
 
 
 

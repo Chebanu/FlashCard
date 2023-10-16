@@ -7,7 +7,6 @@ public class Word
 	[Key]
 	public Guid WordId { get; set; }
 	public string WordText { get; set; }
-	public Guid ThemeId { get; set; }
 	public Guid LanguageId { get; set; }
 	public Guid LevelId { get; set; }
 	public string? ImageUrl { get; set; }
@@ -15,6 +14,4 @@ public class Word
 	public Language Language { get; set; }
 	[ForeignKey("LevelId")]
 	public Level Level { get; set; }
-	[ForeignKey("ThemeId")]
-	public Theme Theme { get; set; }
 }

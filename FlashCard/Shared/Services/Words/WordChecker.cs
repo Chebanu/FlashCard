@@ -10,8 +10,7 @@ public class WordChecker
 		var isWordExist = await mediator.Send(new IsWordExist.Query
 		{
 			WordText = word.WordText,
-			LanguageId = word.LanguageId,
-			ThemeId = word.ThemeId,
+			LanguageId = word.LanguageId
 		});
 
 		if (isWordExist)

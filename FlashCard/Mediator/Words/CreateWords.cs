@@ -37,15 +37,12 @@ public class CreateWords
 																request.WordRequest.Language.ToString());
 			var level = await _context.Levels.FirstOrDefaultAsync(l => l.LevelName ==
 																		request.WordRequest.Level.ToString());
-			var theme = await _context.Themes.FirstOrDefaultAsync(t => t.ThemeName ==
-																request.WordRequest.ThemeName);
 
-			if (language == null || level == null || theme == null)
+			if (language == null || level == null)
 				throw new ArgumentNullException("Something went wrong, 1 or more parameters don't match");
 
 			word.LanguageId = language.LanguageId;
 			word.LevelId = level.LevelId;
-			word.ThemeId = theme.ThemeId;
 
 			var isExist = await WordChecker.CheckIfWordExists(word, request.Mediator);
 

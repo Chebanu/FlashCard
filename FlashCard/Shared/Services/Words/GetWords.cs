@@ -8,8 +8,7 @@ public enum TypeOfQueryWord
 	All,
 	Level,
 	Quantity,
-	Language,
-	Theme
+	Language
 }
 
 public class GetWords
@@ -22,7 +21,6 @@ public class GetWords
 					{
 						WordId = x.WordId,
 						WordText = x.WordText,
-						Theme = x.Theme,
 						Language = x.Language,
 						Level = x.Level,
 						ImageUrl = x.ImageUrl
@@ -42,7 +40,6 @@ public class GetWords
 																	TypeOfQueryWord typeOfQueryWord,
 																	string targetLang = null,
 																	string level = null,
-																	string theme = null,
 																	int quantity = 0)
 	{
 		var words = new List<Word>();
@@ -74,14 +71,6 @@ public class GetWords
 				{
 					words = await GetFlashCards(context,
 												query => query.Where(x => x.Language.LanguageName == targetLang));
-				}
-				break;
-			case TypeOfQueryWord.Theme:
-				if (!string.IsNullOrEmpty(targetLang) && !string.IsNullOrEmpty(theme))
-				{
-					words = await GetFlashCards(context,
-												query => query.Where(x => x.Language.LanguageName == targetLang)
-													.Where(x => x.Theme.ThemeName == theme));
 				}
 				break;
 			default:

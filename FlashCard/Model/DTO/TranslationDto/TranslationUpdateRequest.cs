@@ -5,16 +5,13 @@ namespace FlashCard.Model.DTO.TranslationDto;
 public class TranslationUpdateRequest
 {
 	[Required]
-	public Guid SourceWordId { get; set; }
+	public Guid TranslationId { get; set; }
 	[Required]
-	public Guid TargetWordId { get; set; }
-
-	public Translation ToTranslation()
-	{
-		return new Translation
-		{
-			SourceWordId = SourceWordId,
-			TargetWordId = TargetWordId
-		};
-	}
+	public string SourceWord { get; set; }
+	[Required]
+	public string SourceLanguage { get; set; }
+	[Required]
+	public string TargetWord { get; set; }
+	[Required]
+	public string TargetLanguage { get; set; }
 }

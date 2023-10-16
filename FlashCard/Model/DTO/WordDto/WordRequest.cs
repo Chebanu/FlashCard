@@ -8,8 +8,6 @@ public class WordRequest
 	[Required]
 	public string WordText { get; set; }
 	[Required]
-	public string ThemeName { get; set; }
-	[Required]
 	public LanguageOfTheWord Language { get; set; }
 	[Required]
 	public LevelOfTheWord Level { get; set; }

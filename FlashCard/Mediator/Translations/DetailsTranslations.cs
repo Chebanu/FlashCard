@@ -28,8 +28,6 @@ public class DetailsTranslations
 			var translation = await _context.Translations
 												.Include(t => t.SourceWord)
 												.Include(t => t.TargetWord)
-												.Include(t => t.SourceWord.Theme.ThemeName)
-												.Include(t => t.TargetWord.Theme.ThemeName)
 												.Include(s => s.SourceWord.Language)
 												.Include(s => s.TargetWord.Language)
 												.Include(s => s.SourceWord.Level)

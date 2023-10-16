@@ -5,7 +5,11 @@ namespace FlashCard.Model.DTO.TranslationDto;
 public class TranslationRequest
 {
 	[Required]
-	public Word SourceWord { get; set; }
+	public string SourceWord { get; set; }
 	[Required]
-	public Word TargetWord { get; set; }
+	public string SourceLanguage { get; set; }
+	[Required]
+	public string TargetWord { get; set; }
+	[Required]
+	public string TargetLanguage { get; set; }
 }

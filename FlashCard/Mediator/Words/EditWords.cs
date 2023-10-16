@@ -33,7 +33,8 @@ public class EditWords
 				throw new Exception("Smth went wrong. 1 or more arguments are not initialize");
 			}
 
-			var getWord = await _context.Words.AsNoTracking().FirstOrDefaultAsync(w => w.WordId == request.WordUpdateRequest.WordId);
+			var getWord = await _context.Words.AsNoTracking()
+											.FirstOrDefaultAsync(w => w.WordId == request.WordUpdateRequest.WordId);
 
 			if (getWord == null)
 			{
@@ -46,17 +47,14 @@ public class EditWords
 																request.WordUpdateRequest.Language.ToString());
 			var level = await _context.Levels.FirstOrDefaultAsync(l => l.LevelName ==
 																		request.WordUpdateRequest.Level.ToString());
-			var theme = await _context.Themes.FirstOrDefaultAsync(t => t.ThemeName ==
-																request.WordUpdateRequest.ThemeName);
 
-			if (theme == null || level == null || language == null)
+			if (level == null || language == null)
 			{
 				throw new Exception("1 or more parameters don't exist in database");
 			}
 
 			word.LanguageId = language.LanguageId;
 			word.LevelId = level.LevelId;
-			word.ThemeId = theme.ThemeId;
 
 			var isExist = await WordChecker.CheckIfWordExists(word, request.Mediator);
 
@@ -67,14 +65,6 @@ public class EditWords
 			await _context.SaveChangesAsync();
 
 			return _mapper.Map<WordResponse>(word);
-
-			/*var translation = await _context.Words.FindAsync(request.Word.WordId);
-
-			_mapper.Map(request.Word, translation);
-
-			await _context.SaveChangesAsync();
-
-			return Unit.Value;*/
 		}
 	}
 }

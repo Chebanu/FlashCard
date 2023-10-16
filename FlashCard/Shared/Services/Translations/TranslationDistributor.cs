@@ -10,8 +10,7 @@ public enum TypeOfQueryTranslation
 {
 	All,
 	Level,
-	Quantity,
-	Theme
+	Quantity
 }
 
 public class TranslationDistributor
@@ -22,14 +21,10 @@ public class TranslationDistributor
 													Func<IQueryable<Translation>, IQueryable<Translation>> filter = null)
 	{
 		var query = context.Translations
-						.Include(s => s.SourceWord.WordText)
-						.Include(s => s.TargetWord.WordText)
-						.Include(s => s.SourceWord.Theme.ThemeName)
-						.Include(s => s.TargetWord.Theme.ThemeName)
-						.Include(s => s.SourceWord.Language.LanguageName)
-						.Include(s => s.TargetWord.Language.LanguageName)
-						.Include(s => s.SourceWord.Level.LevelName)
-						.Include(s => s.TargetWord.Level.LevelName)
+						.Include(s => s.SourceWord.Language)
+						.Include(s => s.TargetWord.Language)
+						.Include(s => s.SourceWord.Level)
+						.Include(s => s.TargetWord.Level)
 					.Select(x => new Translation
 					{
 						TranslationId = x.TranslationId,
@@ -54,7 +49,6 @@ public class TranslationDistributor
 															TypeOfQueryTranslation typeOfQueryTranslation,
 															string sourceLang,
 															string targetLang,
-															string theme = null,
 															string level = null,
 															int quantity = 0)
 	{
@@ -89,18 +83,6 @@ public class TranslationDistributor
 													query => query
 														.OrderBy(x => Guid.NewGuid())
 														.Take(quantity));
-				}
-				break;
-			case TypeOfQueryTranslation.Theme:
-				if (!string.IsNullOrWhiteSpace(targetLang) &&
-					!string.IsNullOrWhiteSpace(sourceLang))
-				{
-					translations = await GetFlashCards(context,
-													sourceLang,
-													targetLang,
-													query => query
-													.Where(t => t.SourceWord.Theme.ThemeName ==
-													theme));
 				}
 				break;
 			default:

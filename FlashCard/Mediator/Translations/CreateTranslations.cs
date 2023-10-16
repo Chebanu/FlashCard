@@ -3,6 +3,7 @@ using FlashCard.Model;
 using FlashCard.Model.DTO.TranslationDto;
 using FlashCard.Shared.Services.Translations;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlashCard.Mediator.Translations;
 
@@ -30,16 +31,31 @@ public class CreateTranslations
 			if (request.TranslationRequest == null && request.Mediator == null)
 				throw new ArgumentNullException($"{nameof(request)} or/and {nameof(request)} are empty");
 
-			var translation = _mapper.Map<Translation>(request.TranslationRequest);
+			var sourceWord = await _context.Words.FirstOrDefaultAsync(x => x.WordText == request.TranslationRequest.SourceWord && x.Language.LanguageName == request.TranslationRequest.SourceLanguage);
 
-			var isExist = await TranslationChecker.CheckIfTranslationExists(translation, request.Mediator);
+			var targetWord = await _context.Words.FirstOrDefaultAsync(x => x.WordText == request.TranslationRequest.TargetWord && x.Language.LanguageName == request.TranslationRequest.TargetLanguage);
+
+			if (sourceWord == null)
+				throw new Exception("Source word does not exist at database");
+
+			if (targetWord == null)
+				throw new Exception("Target word does not exist at database");
+
+			var newTranslation = new Translation
+			{
+				TranslationId = Guid.NewGuid(),
+				SourceWordId = sourceWord.WordId,
+				TargetWordId = targetWord.WordId
+			};
+
+			var isExist = await TranslationChecker.CheckIfTranslationExists(newTranslation, request.Mediator);
 
 			if (isExist)
 				throw new Exception("The translation is already exist");
 
-			translation.TranslationId = Guid.NewGuid();
+			newTranslation.TranslationId = Guid.NewGuid();
 
-			_context.Translations.Add(translation);
+			_context.Translations.Add(newTranslation);
 			await _context.SaveChangesAsync();
 
 			return Unit.Value;
