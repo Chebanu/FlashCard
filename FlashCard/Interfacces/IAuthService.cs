@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FlashCard.Interfacces;
 
+/// <summary>
+/// Contracts for authentication services
+/// </summary>
 public interface IAuthService
 {
 	Task<AuthServiceRequestDto> SeedRolesAsync();

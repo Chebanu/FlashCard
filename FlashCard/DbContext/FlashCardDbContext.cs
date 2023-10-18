@@ -6,6 +6,9 @@ using System.Text.Json;
 
 namespace FlashCard.Model;
 
+/// <summary>
+/// Logic for db
+/// </summary>
 public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 {
 	public FlashCardDbContext(DbContextOptions<FlashCardDbContext> options) : base(options)
@@ -19,11 +22,13 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		//initialize primary keys
 		modelBuilder.Entity<Language>().HasKey(l => l.LanguageId);
 		modelBuilder.Entity<Level>().HasKey(l => l.LevelId);
 		modelBuilder.Entity<Word>().HasKey(w => w.WordId);
 		modelBuilder.Entity<Translation>().HasKey(t => t.TranslationId);
 
+		//initialize foreign keys
 		modelBuilder.Entity<Word>()
 			.HasOne(w => w.Language)
 			.WithMany()
@@ -50,7 +55,7 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 			.HasIndex(w => new { w.SourceWordId, w.TargetWordId })
 			.IsUnique();
 
-
+		//initialize database with some data
 		string languageJSON = File.ReadAllText("languages.json");
 		List<Language>? languages = JsonSerializer.Deserialize<List<Language>>(languageJSON);
 

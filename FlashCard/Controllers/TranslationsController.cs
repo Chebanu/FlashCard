@@ -5,8 +5,17 @@ using FlashCard.Model.DTO.TranslationDto;
 
 namespace FlashCard.Controllers;
 
+/// <summary>
+/// Translation Controller manipulate with translation instances
+/// </summary>
 public class TranslationsController : BaseApiController
 {
+	/// <summary>
+	/// Get list of translations sorting by source and target languages
+	/// </summary>
+	/// <param name="sourceLanguage">The language you currently learn</param>
+	/// <param name="targetLanguage">The language which you already know</param>
+	/// <returns></returns>
 	[HttpGet]
 	public async Task<ActionResult<List<TranslationResponse>>> GetTranslations(string sourceLanguage, string targetLanguage)
 	{
@@ -21,12 +30,17 @@ public class TranslationsController : BaseApiController
 		return Ok(uniqueTranslations);
 	}
 
+	/// <summary>
+	/// Get 1 translation by Guid
+	/// </summary>
+	/// <param name="id">Translation id property</param>
+	/// <returns></returns>
 	[HttpGet("{id}")]
 	public async Task<ActionResult<TranslationResponse>> GetTranslation(Guid id)
 	{
 		try
 		{
-			return await Mediator.Send(new DetailsTranslations.Query { Id = id });
+			return await Mediator.Send(new DetailsTranslation.Query { Id = id });
 		}
 		catch (Exception ex)
 		{
@@ -34,6 +48,13 @@ public class TranslationsController : BaseApiController
 		}
 	}
 
+	/// <summary>
+	/// Get certain amount of translations by source and target language
+	/// </summary>
+	/// <param name="quantity">Define the quantity of cards you'll from db</param>
+	/// <param name="sourceLanguage">The language you currently learn</param>
+	/// <param name="targetLanguage">The language which you already know</param>
+	/// <returns>Certain amount of flash cards</returns>
 	[HttpGet("quantity/{quantity}/{sourceLanguage}/{targetLanguage}")]
 	public async Task<ActionResult<List<TranslationResponse>>> GetRandomQuantityOfCards(int quantity, string sourceLanguage, string targetLanguage)
 	{
@@ -41,7 +62,7 @@ public class TranslationsController : BaseApiController
 			return BadRequest("Something went wrong");
 
 		var uniqueTranslations = await TranslationDistributor.Distribute(Mediator,
-																			TypeOfQueryTranslation.All,
+																			TypeOfQueryTranslation.Quantity,
 																			sourceLanguage,
 																			targetLanguage,
 																			quantity: quantity);
@@ -49,10 +70,16 @@ public class TranslationsController : BaseApiController
 		return Ok(uniqueTranslations.Take(quantity));
 	}
 
+	/// <summary>
+	/// Get translations by their level. Sorted by source and target languages
+	/// </summary>
+	/// <param name="level">Define the level of source word(A1,A2,B1 etc.)</param>
+	/// <param name="sourceLanguage">The language you currently learn</param>
+	/// <param name="targetLanguage">The language which you already know</param>
+	/// <returns></returns>
 	[HttpGet("level/{level}/{sourceLanguage}/{targetLanguage}")]
 	public async Task<ActionResult<List<TranslationResponse>>> GetCardsByLevel(string level, string sourceLanguage, string targetLanguage)
 	{
-		//сейм щит
 		if (sourceLanguage == targetLanguage)
 			return BadRequest("Source and target languages must be different");
 
@@ -65,6 +92,11 @@ public class TranslationsController : BaseApiController
 		return uniqueTranslations;
 	}
 
+	/// <summary>
+	/// Create a translation
+	/// </summary>
+	/// <param name="translationRequest">Dto for translation request</param>
+	/// <returns></returns>
 	[HttpPost]
 	public async Task<ActionResult> Create(TranslationRequest translationRequest)
 	{
@@ -91,6 +123,12 @@ public class TranslationsController : BaseApiController
 		return Ok();
 	}
 
+
+	/// <summary>
+	/// Edit translation
+	/// </summary>
+	/// <param name="translationUpdateRequest"></param>
+	/// <returns></returns>
 	[HttpPut]
 	public async Task<ActionResult<TranslationResponse>> Edit(TranslationUpdateRequest translationUpdateRequest)
 	{
@@ -117,7 +155,11 @@ public class TranslationsController : BaseApiController
 	}
 
 
-
+	/// <summary>
+	/// Delete translation
+	/// </summary>
+	/// <param name="id">Delete by id</param>
+	/// <returns></returns>
 	[HttpDelete("{id}")]
 	public async Task<ActionResult> Delete(Guid id)
 	{

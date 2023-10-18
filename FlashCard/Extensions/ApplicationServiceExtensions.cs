@@ -4,6 +4,13 @@ using MediatR;
 namespace FlashCard.Extentions;
 public static class ApplicationServiceExtensions
 {
+	/// <summary>
+	/// Extension method for program.cs file
+	/// Add Services
+	/// </summary>
+	/// <param name="services"></param>
+	/// <param name="config"></param>
+	/// <returns></returns>
 	public static IServiceCollection AddApplicationServices(this IServiceCollection services,
 		IConfiguration config)
 	{

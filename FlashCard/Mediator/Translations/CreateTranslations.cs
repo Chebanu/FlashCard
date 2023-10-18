@@ -6,9 +6,14 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlashCard.Mediator.Translations;
-
+/// <summary>
+/// Create mediator class for translation
+/// </summary>
 public class CreateTranslations
 {
+	/// <summary>
+	/// Command input properties
+	/// </summary>
 	public class Command : IRequest
 	{
 		public IMediator Mediator { get; set; }
@@ -18,22 +23,31 @@ public class CreateTranslations
 	public class Handler : IRequestHandler<Command>
 	{
 		private readonly FlashCardDbContext _context;
-		private readonly IMapper _mapper;
 
-		public Handler(FlashCardDbContext context, IMapper mapper)
+		public Handler(FlashCardDbContext context)
 		{
 			_context = context;
-			_mapper = mapper;
 		}
 
+		/// <summary>
+		/// Create translation
+		/// </summary>
+		/// <param name="request">Get properties from Command class</param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentNullException">Smth was uninitialize</exception>
+		/// <exception cref="Exception">Could be thrown if source or target word do not exist at database.
+		/// Or if the translation already exist at DB</exception>
 		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
 		{
 			if (request.TranslationRequest == null && request.Mediator == null)
 				throw new ArgumentNullException($"{nameof(request)} or/and {nameof(request)} are empty");
 
-			var sourceWord = await _context.Words.FirstOrDefaultAsync(x => x.WordText == request.TranslationRequest.SourceWord && x.Language.LanguageName == request.TranslationRequest.SourceLanguage);
+			var sourceWord = await _context.Words.FirstOrDefaultAsync(x => x.WordText == request.TranslationRequest.SourceWord &&
+															x.Language.LanguageName == request.TranslationRequest.SourceLanguage);
 
-			var targetWord = await _context.Words.FirstOrDefaultAsync(x => x.WordText == request.TranslationRequest.TargetWord && x.Language.LanguageName == request.TranslationRequest.TargetLanguage);
+			var targetWord = await _context.Words.FirstOrDefaultAsync(x => x.WordText == request.TranslationRequest.TargetWord &&
+															x.Language.LanguageName == request.TranslationRequest.TargetLanguage);
 
 			if (sourceWord == null)
 				throw new Exception("Source word does not exist at database");
@@ -48,6 +62,7 @@ public class CreateTranslations
 				TargetWordId = targetWord.WordId
 			};
 
+			//Check if the translation exist at database(avoid dublicates)
 			var isExist = await TranslationChecker.CheckIfTranslationExists(newTranslation, request.Mediator);
 
 			if (isExist)

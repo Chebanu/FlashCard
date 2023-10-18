@@ -59,18 +59,6 @@ public class GetTranslationsBy
 			var translationResponse = _mapper.Map<List<TranslationResponse>>(translations);
 
 			return translationResponse;
-
-			/*return words;
-
-			var rando1mCards = await GetTranslation.GetFalshCardsByParameters(_context, request.SourceLanguage, request.TargetLanguage);
-
-			var randomCards = await GetTranslation.GetFalshCardsByParameters(_context,
-																		TypeOfQueryTranslation.Level,
-																		request.SourceLanguage,
-																		request.TargetLanguage,
-																		level: request.Level);
-
-			return randomCards;*/
 		}
 	}
 }

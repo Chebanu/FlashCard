@@ -38,6 +38,8 @@ public class EditTranslations
 			if (getTranslation == null)
 				throw new Exception("The translation doesn't exist");
 
+			//get source word from db
+
 			var sourceWord = await _context.Words
 												.Include(s => s.Language)
 												.Include(s => s.Level)
@@ -52,6 +54,8 @@ public class EditTranslations
 											.Where(x => x.Language.LanguageName == request.TranslationUpdateRequest.SourceLanguage)
 										.FirstOrDefaultAsync();
 
+			//get target word from db
+
 			var targetWord = await _context.Words
 												.Include(s => s.Language)
 												.Include(s => s.Level)
@@ -65,12 +69,6 @@ public class EditTranslations
 											.Where(x => x.WordText == request.TranslationUpdateRequest.TargetWord)
 											.Where(x => x.Language.LanguageName == request.TranslationUpdateRequest.TargetLanguage)
 										.FirstOrDefaultAsync();
-
-
-			/*FirstOrDefaultAsync(x => x.WordText == request.TranslationUpdateRequest.SourceWord &&
-																	x.Language.LanguageName == request.TranslationUpdateRequest.SourceLanguage);*/
-			/*var targetWord = await _context.Words.FirstOrDefaultAsync(x => x.WordText == request.TranslationUpdateRequest.TargetWord &&
-																		x.Language.LanguageName == request.TranslationUpdateRequest.TargetLanguage);*/
 
 			if (sourceWord == null)
 				throw new Exception("Source word does not exist at database");

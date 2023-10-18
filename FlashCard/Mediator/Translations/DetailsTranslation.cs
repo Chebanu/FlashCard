@@ -6,8 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlashCard.Mediator.Translations;
 
-public class DetailsTranslations
+public class DetailsTranslation
 {
+	/// <summary>
+	/// Get information of the transaltion
+	/// </summary>
 	public class Query : IRequest<TranslationResponse>
 	{
 		public Guid Id { get; set; }
@@ -23,6 +26,13 @@ public class DetailsTranslations
 			_mapper = mapper;
 		}
 
+		/// <summary>
+		/// Get 1 translation by id
+		/// </summary>
+		/// <param name="request"></param>
+		/// <param name="cancellationToken"></param>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
 		public async Task<TranslationResponse> Handle(Query request, CancellationToken cancellationToken)
 		{
 			var translation = await _context.Translations

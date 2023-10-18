@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FlashCard.Controllers;
 
+/// <summary>
+/// Authorization Controller
+/// </summary>
 public class AuthController : BaseApiController
 {
 	private readonly IAuthService _authService;
@@ -13,6 +16,10 @@ public class AuthController : BaseApiController
 		_authService = authService;
 	}
 
+	/// <summary>
+	/// Seed database with Roles [Admin, User]
+	/// </summary>
+	/// <returns></returns>
 	[HttpPost]
 	[Route("seed-roles")]
 	public async Task<IActionResult> SeedRoles()
@@ -21,6 +28,11 @@ public class AuthController : BaseApiController
 		return Ok(seedRoles);
 	}
 
+	/// <summary>
+	/// Register Form. After registration you will be as a user
+	/// </summary>
+	/// <param name="registerDto"></param>
+	/// <returns></returns>
 	[HttpPost]
 	[Route("register")]
 	public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
@@ -33,6 +45,11 @@ public class AuthController : BaseApiController
 		return BadRequest(register);
 	}
 
+	/// <summary>
+	/// Login to your account
+	/// </summary>
+	/// <param name="loginDto"></param>
+	/// <returns></returns>
 	[HttpPost]
 	[Route("login")]
 	public async Task<IActionResult> Login([FromBody] Login loginDto)
@@ -46,7 +63,11 @@ public class AuthController : BaseApiController
 
 	}
 
-	//make user => admin
+	/// <summary>
+	/// Promote user to admin
+	/// </summary>
+	/// <param name="updatePermissionDto"></param>
+	/// <returns></returns>
 	[HttpPost]
 	[Route("make-admin")]
 	public async Task<IActionResult> MakeAdminAsync([FromBody] UpdatePermissionDto updatePermissionDto)

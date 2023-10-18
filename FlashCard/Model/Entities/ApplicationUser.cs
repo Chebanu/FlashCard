@@ -1,5 +1,4 @@
-﻿using FlashCard.Model.Domain;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace FlashCard.Model.Entities;
 
