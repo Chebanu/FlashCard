@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlashCard.Migrations
 {
     [DbContext(typeof(FlashCardDbContext))]
-    [Migration("20231016113753_initial")]
+    [Migration("20231020102540_initial")]
     partial class initial
     {
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace FlashCard.Migrations
 
                     b.HasKey("LanguageId");
 
-                    b.ToTable("Languages");
+                    b.ToTable("Language", (string)null);
 
                     b.HasData(
                         new
@@ -153,7 +153,7 @@ namespace FlashCard.Migrations
 
                     b.HasKey("LevelId");
 
-                    b.ToTable("Levels");
+                    b.ToTable("Level", (string)null);
 
                     b.HasData(
                         new
@@ -340,7 +340,7 @@ namespace FlashCard.Migrations
                     b.HasIndex("SourceWordId", "TargetWordId")
                         .IsUnique();
 
-                    b.ToTable("Translations");
+                    b.ToTable("Translation", (string)null);
 
                     b.HasData(
                         new
@@ -393,7 +393,7 @@ namespace FlashCard.Migrations
 
                     b.HasIndex("LevelId");
 
-                    b.ToTable("Words");
+                    b.ToTable("Word", (string)null);
 
                     b.HasData(
                         new

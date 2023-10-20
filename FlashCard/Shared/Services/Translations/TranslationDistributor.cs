@@ -25,12 +25,6 @@ public class TranslationDistributor
 						.Include(s => s.TargetWord.Language)
 						.Include(s => s.SourceWord.Level)
 						.Include(s => s.TargetWord.Level)
-					.Select(x => new Translation
-					{
-						TranslationId = x.TranslationId,
-						SourceWord = x.SourceWord,
-						TargetWord = x.TargetWord,
-					})
 						.Where(s => s.SourceWord.Language.LanguageName == sourceLang)
 						.Where(r => r.TargetWord.Language.LanguageName == targetLang);
 
@@ -39,7 +33,14 @@ public class TranslationDistributor
 			query = filter(query);
 		}
 
-		var randomCards = await query.ToListAsync();
+		var randomCards = await query
+					.Select(x => new Translation
+					{
+						TranslationId = x.TranslationId,
+						SourceWord = x.SourceWord,
+						TargetWord = x.TargetWord,
+					})
+				.ToListAsync();
 
 		return randomCards;
 	}

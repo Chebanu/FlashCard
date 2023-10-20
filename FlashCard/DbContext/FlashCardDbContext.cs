@@ -2,6 +2,7 @@
 using FlashCard.Model.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System.Text.Json;
 
 namespace FlashCard.Model;
@@ -22,6 +23,11 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
+		{
+			modelBuilder.Entity(entityType.Name).ToTable(entityType.ClrType.Name);
+		}
+
 		//initialize primary keys
 		modelBuilder.Entity<Language>().HasKey(l => l.LanguageId);
 		modelBuilder.Entity<Level>().HasKey(l => l.LevelId);

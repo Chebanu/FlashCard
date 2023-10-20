@@ -55,7 +55,7 @@ namespace FlashCard.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Languages",
+                name: "Language",
                 columns: table => new
                 {
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -63,11 +63,11 @@ namespace FlashCard.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Languages", x => x.LanguageId);
+                    table.PrimaryKey("PK_Language", x => x.LanguageId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Levels",
+                name: "Level",
                 columns: table => new
                 {
                     LevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -75,7 +75,7 @@ namespace FlashCard.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Levels", x => x.LevelId);
+                    table.PrimaryKey("PK_Level", x => x.LevelId);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,7 +185,7 @@ namespace FlashCard.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Words",
+                name: "Word",
                 columns: table => new
                 {
                     WordId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -196,23 +196,23 @@ namespace FlashCard.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Words", x => x.WordId);
+                    table.PrimaryKey("PK_Word", x => x.WordId);
                     table.ForeignKey(
-                        name: "FK_Words_Languages_LanguageId",
+                        name: "FK_Word_Language_LanguageId",
                         column: x => x.LanguageId,
-                        principalTable: "Languages",
+                        principalTable: "Language",
                         principalColumn: "LanguageId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Words_Levels_LevelId",
+                        name: "FK_Word_Level_LevelId",
                         column: x => x.LevelId,
-                        principalTable: "Levels",
+                        principalTable: "Level",
                         principalColumn: "LevelId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Translations",
+                name: "Translation",
                 columns: table => new
                 {
                     TranslationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -221,23 +221,23 @@ namespace FlashCard.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Translations", x => x.TranslationId);
+                    table.PrimaryKey("PK_Translation", x => x.TranslationId);
                     table.ForeignKey(
-                        name: "FK_Translations_Words_SourceWordId",
+                        name: "FK_Translation_Word_SourceWordId",
                         column: x => x.SourceWordId,
-                        principalTable: "Words",
+                        principalTable: "Word",
                         principalColumn: "WordId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Translations_Words_TargetWordId",
+                        name: "FK_Translation_Word_TargetWordId",
                         column: x => x.TargetWordId,
-                        principalTable: "Words",
+                        principalTable: "Word",
                         principalColumn: "WordId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
-                table: "Languages",
+                table: "Language",
                 columns: new[] { "LanguageId", "LanguageName" },
                 values: new object[,]
                 {
@@ -250,7 +250,7 @@ namespace FlashCard.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Levels",
+                table: "Level",
                 columns: new[] { "LevelId", "LevelName" },
                 values: new object[,]
                 {
@@ -263,7 +263,7 @@ namespace FlashCard.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Words",
+                table: "Word",
                 columns: new[] { "WordId", "ImageUrl", "LanguageId", "LevelId", "WordText" },
                 values: new object[,]
                 {
@@ -276,7 +276,7 @@ namespace FlashCard.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Translations",
+                table: "Translation",
                 columns: new[] { "TranslationId", "SourceWordId", "TargetWordId" },
                 values: new object[,]
                 {
@@ -326,24 +326,24 @@ namespace FlashCard.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Translations_SourceWordId_TargetWordId",
-                table: "Translations",
+                name: "IX_Translation_SourceWordId_TargetWordId",
+                table: "Translation",
                 columns: new[] { "SourceWordId", "TargetWordId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Translations_TargetWordId",
-                table: "Translations",
+                name: "IX_Translation_TargetWordId",
+                table: "Translation",
                 column: "TargetWordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Words_LanguageId",
-                table: "Words",
+                name: "IX_Word_LanguageId",
+                table: "Word",
                 column: "LanguageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Words_LevelId",
-                table: "Words",
+                name: "IX_Word_LevelId",
+                table: "Word",
                 column: "LevelId");
         }
 
@@ -366,7 +366,7 @@ namespace FlashCard.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Translations");
+                name: "Translation");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -375,13 +375,13 @@ namespace FlashCard.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Words");
+                name: "Word");
 
             migrationBuilder.DropTable(
-                name: "Languages");
+                name: "Language");
 
             migrationBuilder.DropTable(
-                name: "Levels");
+                name: "Level");
         }
     }
 }
