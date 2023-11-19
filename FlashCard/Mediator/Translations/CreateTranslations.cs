@@ -14,13 +14,13 @@ public class CreateTranslations
 	/// <summary>
 	/// Command input properties
 	/// </summary>
-	public class Command : IRequest
+	public class Command : IRequest<Guid>
 	{
 		public IMediator Mediator { get; set; }
 		public TranslationRequest TranslationRequest { get; set; }
 	}
 
-	public class Handler : IRequestHandler<Command>
+	public class Handler : IRequestHandler<Command,Guid>
 	{
 		private readonly FlashCardDbContext _context;
 
@@ -38,7 +38,7 @@ public class CreateTranslations
 		/// <exception cref="ArgumentNullException">Smth was uninitialize</exception>
 		/// <exception cref="Exception">Could be thrown if source or target word do not exist at database.
 		/// Or if the translation already exist at DB</exception>
-		public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+		public async Task<Guid> Handle(Command request, CancellationToken cancellationToken)
 		{
 			if (request.TranslationRequest == null && request.Mediator == null)
 				throw new ArgumentNullException($"{nameof(request)} or/and {nameof(request)} are empty");
@@ -55,9 +55,11 @@ public class CreateTranslations
 			if (targetWord == null)
 				throw new Exception("Target word does not exist at database");
 
+			var translationId = Guid.NewGuid();
+
 			var newTranslation = new Translation
 			{
-				TranslationId = Guid.NewGuid(),
+				TranslationId = translationId,
 				SourceWordId = sourceWord.WordId,
 				TargetWordId = targetWord.WordId
 			};
@@ -73,7 +75,7 @@ public class CreateTranslations
 			_context.Translations.Add(newTranslation);
 			await _context.SaveChangesAsync();
 
-			return Unit.Value;
+			return translationId;
 		}
 	}
 }

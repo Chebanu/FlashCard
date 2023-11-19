@@ -2,14 +2,20 @@
 using FlashCard.Mediator.Translations;
 using FlashCard.Shared.Services.Translations;
 using FlashCard.Model.DTO.TranslationDto;
+using MediatR;
 
 namespace FlashCard.Controllers;
 
 /// <summary>
 /// Translation Controller manipulate with translation instances
 /// </summary>
-public class TranslationsController : BaseApiController
+public class TranslationsController : ControllerBase
 {
+	private readonly IMediator _mediator;
+	public TranslationsController(IMediator mediator)
+	{
+		_mediator = mediator;
+	}
 	/// <summary>
 	/// Get list of translations sorting by source and target languages
 	/// </summary>
@@ -20,9 +26,11 @@ public class TranslationsController : BaseApiController
 	public async Task<ActionResult<List<TranslationResponse>>> GetTranslations(string sourceLanguage, string targetLanguage)
 	{
 		if (sourceLanguage == targetLanguage)
+		{
 			return BadRequest("Source and target languages must be different");
+		}
 
-		var uniqueTranslations = await TranslationDistributor.Distribute(Mediator,
+		var uniqueTranslations = await TranslationDistributor.Distribute(_mediator,
 																			TypeOfQueryTranslation.All,
 																			sourceLanguage,
 																			targetLanguage);
@@ -40,11 +48,11 @@ public class TranslationsController : BaseApiController
 	{
 		try
 		{
-			return await Mediator.Send(new DetailsTranslation.Query { Id = id });
+			return await _mediator.Send(new DetailsTranslation.Query { Id = id });
 		}
-		catch (Exception ex)
+		catch
 		{
-			return BadRequest(ex.Message);
+			return BadRequest("Something went wrong");
 		}
 	}
 
@@ -59,9 +67,11 @@ public class TranslationsController : BaseApiController
 	public async Task<ActionResult<List<TranslationResponse>>> GetRandomQuantityOfCards(int quantity, string sourceLanguage, string targetLanguage)
 	{
 		if (quantity <= 0 || sourceLanguage == targetLanguage)
-			return BadRequest("Something went wrong");
+		{
+			return BadRequest("Quantity must be more than 0 and languages must be different");
+		}
 
-		var uniqueTranslations = await TranslationDistributor.Distribute(Mediator,
+		var uniqueTranslations = await TranslationDistributor.Distribute(_mediator,
 																			TypeOfQueryTranslation.Quantity,
 																			sourceLanguage,
 																			targetLanguage,
@@ -81,9 +91,11 @@ public class TranslationsController : BaseApiController
 	public async Task<ActionResult<List<TranslationResponse>>> GetCardsByLevel(string level, string sourceLanguage, string targetLanguage)
 	{
 		if (sourceLanguage == targetLanguage)
+		{
 			return BadRequest("Source and target languages must be different");
+		}
 
-		var uniqueTranslations = await TranslationDistributor.Distribute(Mediator,
+		var uniqueTranslations = await TranslationDistributor.Distribute(_mediator,
 																			TypeOfQueryTranslation.Level,
 																			sourceLanguage,
 																			targetLanguage,
@@ -101,26 +113,30 @@ public class TranslationsController : BaseApiController
 	public async Task<ActionResult> Create(TranslationRequest translationRequest)
 	{
 		if (translationRequest.SourceLanguage == translationRequest.TargetLanguage)
+		{
 			return BadRequest("You can not add translation for the same language as source one");
+		}
+
+		Guid createdId;
 
 		try
 		{
-			await Mediator.Send(new CreateTranslations.Command
+			createdId = await _mediator.Send(new CreateTranslations.Command
 			{
 				TranslationRequest = translationRequest,
-				Mediator = Mediator
+				Mediator = _mediator
 			});
 		}
 		catch (ArgumentNullException ex)
 		{
 			return BadRequest($"Argument exception, {ex}");
 		}
-		catch (Exception ex)
+		catch
 		{
-			return BadRequest(ex.Message);
+			return BadRequest("Something went wrong");
 		}
 
-		return Ok();
+		return CreatedAtAction("The translation is succesfully saved. Your id", createdId);
 	}
 
 
@@ -140,10 +156,10 @@ public class TranslationsController : BaseApiController
 
 		try
 		{
-			newTranslation = await Mediator.Send(new EditTranslations.Command
+			newTranslation = await _mediator.Send(new EditTranslations.Command
 			{
 				TranslationUpdateRequest = translationUpdateRequest,
-				Mediator = Mediator
+				Mediator = _mediator
 			});
 		}
 		catch (Exception ex)
@@ -165,13 +181,13 @@ public class TranslationsController : BaseApiController
 	{
 		try
 		{
-			await Mediator.Send(new DeleteTranslations.Command { Id = id });
+			await _mediator.Send(new DeleteTranslations.Command { Id = id });
 		}
-		catch (Exception ex)
+		catch
 		{
-			return BadRequest(ex.Message);
+			return BadRequest("The translation is not found");
 		}
 
-		return Ok();
+		return NoContent();
 	}
 }

@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿/*using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlashCard.Controllers;
@@ -18,3 +18,4 @@ public class BaseApiController : ControllerBase
 	/// </summary>
 	protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
 }
+*/

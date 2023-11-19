@@ -2,22 +2,31 @@
 using FlashCard.Mediator.Words;
 using FlashCard.Shared.Services.Translations;
 using FlashCard.Model.DTO.WordDto;
+using MediatR;
 
 namespace FlashCard.Controllers;
 
 /// <summary>
 /// Word Controller
 /// </summary>
-public class WordsController : BaseApiController
+public class WordsController : ControllerBase
 {
-	/// <summary>
-	/// Get all words from DB
-	/// </summary>
-	/// <returns></returns>
-	[HttpGet]
+	private readonly IMediator _mediator;
+
+    public WordsController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+
+    /// <summary>
+    /// Get all words from DB
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
 	public async Task<ActionResult<List<WordResponse>>> GetWords()
 	{
-		return await Mediator.Send(new GetWordsBy.Query
+		return await _mediator.Send(new GetWordsBy.Query
 		{
 			TypeOfQueryWord = TypeOfQueryWord.All
 		});
@@ -32,7 +41,7 @@ public class WordsController : BaseApiController
 	[HttpGet("byLanguage/{targetLanguage}")]
 	public async Task<ActionResult<List<WordResponse>>> GetWordsByLanguage(string targetLanguage)
 	{
-		return await Mediator.Send(new GetWordsBy.Query
+		return await _mediator.Send(new GetWordsBy.Query
 		{
 			TypeOfQueryWord = TypeOfQueryWord.Language,
 			TargetLanguage = targetLanguage
@@ -51,7 +60,7 @@ public class WordsController : BaseApiController
 	{
 		//add verification for existing of the lang
 		//upd, verification will not be implemented, will be a filter on client lvl
-		return await Mediator.Send(new GetWordsBy.Query
+		return await _mediator.Send(new GetWordsBy.Query
 		{
 			TypeOfQueryWord = TypeOfQueryWord.Quantity,
 			TargetLanguage = targetLanguage,
@@ -71,7 +80,7 @@ public class WordsController : BaseApiController
 
 		try
 		{
-			word = await Mediator.Send(new DetailsWordsById.Query { Id = id });
+			word = await _mediator.Send(new DetailsWordsById.Query { Id = id });
 		}
 		catch (Exception ex)
 		{
@@ -91,10 +100,10 @@ public class WordsController : BaseApiController
 	{
 		try
 		{
-			await Mediator.Send(new CreateWords.Command
+			await _mediator.Send(new CreateWords.Command
 			{
 				WordRequest = wordRequest,
-				Mediator = Mediator
+				Mediator = _mediator
 			});
 		}
 		catch (Exception ex)
@@ -113,7 +122,7 @@ public class WordsController : BaseApiController
 	[HttpPut]
 	public async Task<ActionResult> Edit(WordUpdateRequest wordUpdateRequest)
 	{
-		return Ok(await Mediator.Send(new EditWords.Command { WordUpdateRequest = wordUpdateRequest, Mediator = Mediator }));
+		return Ok(await _mediator.Send(new EditWords.Command { WordUpdateRequest = wordUpdateRequest, Mediator = _mediator }));
 	}
 
 	/// <summary>
@@ -126,7 +135,7 @@ public class WordsController : BaseApiController
 	{
 		try
 		{
-			await Mediator.Send(new DeleteWords.Command { Id = id });
+			await _mediator.Send(new DeleteWords.Command { Id = id });
 		}
 		catch (ArgumentNullException ex)
 		{
