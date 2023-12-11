@@ -6,12 +6,12 @@ namespace FlashCard.Mediator.Words;
 
 public class DeleteWords
 {
-	public class Command : IRequest
+	public class Command : IRequest<Unit>
 	{
 		public Guid Id { get; set; }
 	}
 
-	public class Handler : IRequestHandler<Command>
+	public class Handler : IRequestHandler<Command, Unit>
 	{
 		private readonly FlashCardDbContext _context;
 		public Handler(FlashCardDbContext context)

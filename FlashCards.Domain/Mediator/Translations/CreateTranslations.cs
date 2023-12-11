@@ -14,13 +14,13 @@ public class CreateTranslations
 	/// <summary>
 	/// Command input properties
 	/// </summary>
-	public class Command : IRequest
+	public class Command : IRequest<Unit>
 	{
 		public IMediator Mediator { get; set; }
 		public TranslationRequest TranslationRequest { get; set; }
 	}
 
-	public class Handler : IRequestHandler<Command>
+	public class Handler : IRequestHandler<Command, Unit>
 	{
 		private readonly FlashCardDbContext _context;
 

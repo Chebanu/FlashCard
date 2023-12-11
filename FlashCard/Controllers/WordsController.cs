@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FlashCard.Mediator.Words;
-using FlashCard.Shared.Services.Translations;
+﻿using FlashCard.Mediator.Words;
 using FlashCard.Model.DTO.WordDto;
+using FlashCard.Shared.Services.Translations;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FlashCard.Controllers;
 

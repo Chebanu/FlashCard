@@ -16,12 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
 
-builder.Services.AddDbContext<FlashCardDbContext>(options =>
-{
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-	options.EnableSensitiveDataLogging();
-});
-
+builder.Services.AddDbContext<FlashCardDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<FlashCardDbContext>().AddDefaultTokenProviders();
 

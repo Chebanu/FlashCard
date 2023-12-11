@@ -9,13 +9,13 @@ namespace FlashCard.Mediator.Words;
 
 public class CreateWords
 {
-	public class Command : IRequest
+	public class Command : IRequest<Unit>
 	{
 		public IMediator Mediator { get; set; }
 		public WordRequest WordRequest { get; set; }
 	}
 
-	public class Handler : IRequestHandler<Command>
+	public class Handler : IRequestHandler<Command, Unit>
 	{
 		private readonly FlashCardDbContext _context;
 		private readonly IMapper _mapper;
