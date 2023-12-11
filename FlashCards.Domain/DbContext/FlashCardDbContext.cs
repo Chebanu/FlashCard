@@ -63,7 +63,7 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 
 		//initialize database with some data
 		string languageJSON = File.ReadAllText("languages.json");
-		List<Language>? languages = JsonSerializer.Deserialize<List<Language>>(languageJSON);
+		List<Language> languages = JsonSerializer.Deserialize<List<Language>>(languageJSON);
 
 
 		foreach (Language language in languages)
@@ -72,7 +72,7 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 		}
 
 		string levelJSON = File.ReadAllText("levels.json");
-		List<Level>? levels = JsonSerializer.Deserialize<List<Level>>(levelJSON);
+		List<Level> levels = JsonSerializer.Deserialize<List<Level>>(levelJSON);
 
 
 		foreach (Level level in levels)
@@ -81,7 +81,7 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 		}
 
 		string wordJSON = File.ReadAllText("words.json");
-		List<Word>? words = JsonSerializer.Deserialize<List<Word>>(wordJSON);
+		List<Word> words = JsonSerializer.Deserialize<List<Word>>(wordJSON);
 
 
 		foreach (Word word in words)
@@ -90,7 +90,7 @@ public class FlashCardDbContext : IdentityDbContext<ApplicationUser>
 		}
 
 		string translationJSON = File.ReadAllText("translations.json");
-		List<Translation>? translations = JsonSerializer.Deserialize<List<Translation>>(translationJSON);
+		List<Translation> translations = JsonSerializer.Deserialize<List<Translation>>(translationJSON);
 
 
 		foreach (Translation translation in translations)

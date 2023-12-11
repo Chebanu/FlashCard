@@ -1,5 +1,6 @@
 ﻿using FlashCard.Mediator.Words;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FlashCard.Extentions;
 public static class ApplicationServiceExtensions
@@ -16,7 +17,7 @@ public static class ApplicationServiceExtensions
 	{
 		services.AddEndpointsApiExplorer();
 		services.AddSwaggerGen();
-		
+
 		services.AddCors(opt =>
 		{
 			opt.AddPolicy("CorsPolicy", policy =>

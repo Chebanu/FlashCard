@@ -14,13 +14,21 @@ public class CreateTranslations
 	/// <summary>
 	/// Command input properties
 	/// </summary>
+<<<<<<< HEAD:FlashCard/Mediator/Translations/CreateTranslations.cs
 	public class Command : IRequest<Guid>
+=======
+	public class Command : IRequest<Unit>
+>>>>>>> Clean-Architecture:FlashCards.Domain/Mediator/Translations/CreateTranslations.cs
 	{
 		public IMediator Mediator { get; set; }
 		public TranslationRequest TranslationRequest { get; set; }
 	}
 
+<<<<<<< HEAD:FlashCard/Mediator/Translations/CreateTranslations.cs
 	public class Handler : IRequestHandler<Command,Guid>
+=======
+	public class Handler : IRequestHandler<Command, Unit>
+>>>>>>> Clean-Architecture:FlashCards.Domain/Mediator/Translations/CreateTranslations.cs
 	{
 		private readonly FlashCardDbContext _context;
 
